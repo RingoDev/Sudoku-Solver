@@ -41,9 +41,7 @@ const Scanner: React.FC<ScannerProps> = (props) => {
 
     return (
         <>
-            <video id={'videoCapture'} ref={videoRef} autoPlay={true}>
-
-            </video>
+            <video id={'videoCapture'} ref={videoRef} autoPlay={true}/>
         </>
     )
 }
