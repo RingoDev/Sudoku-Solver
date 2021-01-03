@@ -56,8 +56,6 @@ export default function Page() {
                         audio: false,
                         video: {
                             facingMode: "environment",
-                            width: width,
-                            height: height,
                         },
                     })
                     return new Promise<HTMLVideoElement | null>((resolve) => {
@@ -110,7 +108,7 @@ export default function Page() {
                     height={height}
                 />
                 {
-                    outputURL ? (<img alt={'The undistorted snapshot'} src={outputURL}/>) : <></>
+                    outputURL ? (<img alt={'The undistorted snapshot'} src={outputURL} width={'100%'}/>) : <></>
                 }
             </div>
         </>
