@@ -7,7 +7,7 @@ interface CameraSelectorProps {
 const CameraSelector: React.FC<CameraSelectorProps> = (props) => {
 
     const selectRef = useRef<HTMLSelectElement>(null);
-    const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
+    const [devices, setDevices] = useState<string[]>([]);
 
     useEffect(() => {
         navigator.mediaDevices.getUserMedia({video: true})
@@ -26,8 +26,10 @@ const CameraSelector: React.FC<CameraSelectorProps> = (props) => {
             for (let i = 0; i !== deviceInfos.length; ++i) {
                 const deviceInfo = deviceInfos[i];
                 console.debug(deviceInfo)
-                if (deviceInfo.kind === 'videoinput' && !devices.find(device => device.deviceId === deviceInfo.deviceId)) {
-                    setDevices([...devices, deviceInfo])
+                if (deviceInfo.kind === 'videoinput' && !devices.includes(deviceInfo.deviceId)) {
+                    const newDevices = devices.slice()
+                    newDevices.push(deviceInfo.deviceId)
+                    setDevices(newDevices);
                     console.debug("Got here")
                 }
             }
@@ -60,10 +62,10 @@ const CameraSelector: React.FC<CameraSelectorProps> = (props) => {
         <>
             <div>
                 <select ref={selectRef} onChange={() => start()}>
-                    {devices.map((deviceInfo, index) => {
+                    {devices.map((deviceId, index) => {
                         return (
-                            <option value={deviceInfo.deviceId} key={deviceInfo.deviceId}>
-                                {deviceInfo.label ? deviceInfo.label : ('camera ' + index + 1)}
+                            <option value={deviceId} key={deviceId}>
+                                {'camera ' + index + 1}
                             </option>
                         )
                     })}
