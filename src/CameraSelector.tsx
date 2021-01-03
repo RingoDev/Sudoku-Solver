@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {ChangeEvent, useEffect, useRef, useState} from "react";
 
 interface CameraSelectorProps {
     setStream: (stream: MediaStream) => void
@@ -51,8 +51,12 @@ const CameraSelector: React.FC<CameraSelectorProps> = (props) => {
         console.log('navigator.MediaDevices.getUserMedia error: ', error.message, error.name);
     }
 
-    function start() {
-        navigator.mediaDevices.getUserMedia({video: true})
+    function start(event: ChangeEvent<HTMLSelectElement>) {
+        navigator.mediaDevices.getUserMedia({
+            video: {
+                deviceId: {exact: event.target.value}
+            }
+        })
             .then((stream) => gotStream(stream))
             .then((devices) => gotDevices(devices))
             .catch((e) => handleError(e));
@@ -61,7 +65,7 @@ const CameraSelector: React.FC<CameraSelectorProps> = (props) => {
     return (
         <>
             <div>
-                <select ref={selectRef} onChange={() => start()}>
+                <select ref={selectRef} onChange={(e) => start(e)}>
                     {devices.map((deviceId, index) => {
                         return (
                             <option value={deviceId} key={deviceId}>
