@@ -12,7 +12,7 @@ export default function Page() {
     const videoRef = useRef<HTMLVideoElement>(null)
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const [outputURL, setOutputURL] = useState<string>();
-    const [videoStream, setVideoStream] = useState<MediaStream>();
+    const [videoStream, setVideoStream] = useState<MediaStream | undefined>(undefined);
 
     /**
      * In the onClick event we'll capture a frame within
@@ -54,12 +54,7 @@ export default function Page() {
             const videoElement = videoRef.current;
             if (videoElement !== null) {
                 if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                    videoElement.srcObject = await navigator.mediaDevices.getUserMedia({
-                        audio: false,
-                        video: {
-                            facingMode: "environment",
-                        },
-                    })
+                    videoElement.srcObject = await navigator.mediaDevices.getUserMedia({video: true,})
                     return new Promise<HTMLVideoElement | null>((resolve) => {
                         if (videoElement !== null) {
                             videoElement.onloadedmetadata = () => {
@@ -85,9 +80,12 @@ export default function Page() {
         load()
     }, [])
 
-    if (videoStream && videoRef.current) {
+
+    if (videoStream !== undefined && videoRef.current !== null) {
+        console.debug("setting videostream to selected")
         videoRef.current.srcObject = videoStream
     }
+
 
     return (
         <>
@@ -99,8 +97,8 @@ export default function Page() {
                     flexDirection: 'column',
                 }}
             >
-                <video style={{width: '100%'}} className="video" playsInline ref={videoRef}/>
-                <CameraSelector setStream={setVideoStream}/>
+                <video style={{width: '100%'}} className="video" playsInline={true} ref={videoRef}/>
+                <CameraSelector setStream={(stream) => setVideoStream(stream)}/>
                 <button
                     disabled={processing}
                     style={{padding: 10}}

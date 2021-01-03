@@ -10,7 +10,8 @@ const CameraSelector: React.FC<CameraSelectorProps> = (props) => {
     const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
 
     useEffect(() => {
-        navigator.mediaDevices.enumerateDevices()
+        navigator.mediaDevices.getUserMedia({video: true})
+            .then((stream) => gotStream(stream))
             .then((devices) => gotDevices(devices))
             .catch((e) => handleError(e));
         //eslint-disable-next-line
@@ -25,7 +26,7 @@ const CameraSelector: React.FC<CameraSelectorProps> = (props) => {
             for (let i = 0; i !== deviceInfos.length; ++i) {
                 const deviceInfo = deviceInfos[i];
                 console.debug(deviceInfo)
-                if (deviceInfo.kind === 'videoinput' && !devices.includes(deviceInfo)) {
+                if (deviceInfo.kind === 'videoinput' && !devices.find(device => device.deviceId === deviceInfo.deviceId)) {
                     setDevices([...devices, deviceInfo])
                     console.debug("Got here")
                 }
@@ -54,7 +55,6 @@ const CameraSelector: React.FC<CameraSelectorProps> = (props) => {
             .then((devices) => gotDevices(devices))
             .catch((e) => handleError(e));
     }
-
 
     return (
         <>
