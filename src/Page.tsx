@@ -1,5 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react'
 import cv from './services/cv'
+import CameraSelector from "./CameraSelector";
 
 
 // We'll limit the processing size to 200px.
@@ -11,6 +12,7 @@ export default function Page() {
     const videoRef = useRef<HTMLVideoElement>(null)
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const [outputURL, setOutputURL] = useState<string>();
+    const [videoStream, setVideoStream] = useState<MediaStream>();
 
     /**
      * In the onClick event we'll capture a frame within
@@ -83,8 +85,12 @@ export default function Page() {
         load()
     }, [])
 
-    return (<>
-            {/*<CameraSelector/>*/}
+    if (videoStream && videoRef.current) {
+        videoRef.current.srcObject = videoStream
+    }
+
+    return (
+        <>
             <div
                 style={{
                     display: 'flex',
@@ -94,6 +100,7 @@ export default function Page() {
                 }}
             >
                 <video style={{width: '100%'}} className="video" playsInline ref={videoRef}/>
+                <CameraSelector setStream={setVideoStream}/>
                 <button
                     disabled={processing}
                     style={{padding: 10}}

@@ -1,6 +1,10 @@
 import React, {useEffect, useRef, useState} from "react";
 
-const CameraSelector: React.FC = () => {
+interface CameraSelectorProps {
+    setStream: (stream: MediaStream) => void
+}
+
+const CameraSelector: React.FC<CameraSelectorProps> = (props) => {
 
     const selectRef = useRef<HTMLSelectElement>(null);
     const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
@@ -9,6 +13,7 @@ const CameraSelector: React.FC = () => {
         navigator.mediaDevices.enumerateDevices()
             .then((devices) => gotDevices(devices))
             .catch((e) => handleError(e));
+        //eslint-disable-next-line
     }, [])
 
     function gotDevices(deviceInfos: MediaDeviceInfo[]) {
@@ -30,7 +35,7 @@ const CameraSelector: React.FC = () => {
 
 
     function gotStream(stream: MediaStream) {
-        // todo send stream to parent
+        props.setStream(stream)
 
         console.debug("Got a Stream")
 
