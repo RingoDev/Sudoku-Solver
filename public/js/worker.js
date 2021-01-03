@@ -24,15 +24,18 @@ function imageProcessing(msg, payload) {
 }
 
 /**
- * Adds VAT to a price
  *
- * @param {string} msg The price without VAT
- * @param {ImageData} payload The VAT [0-1]
+ * @param {string} msg
+ * @param {ImageData} payload
  *
  * @returns {void}
  */
 function sudokuProcessing(msg, payload) {
-    console.log(payload.height)
+    const image = {
+        height: payload.height,
+        width: payload.width
+    }
+
     const img = cv.matFromImageData(payload)
     const sudoku = new cv.Mat()
 
@@ -44,8 +47,8 @@ function sudokuProcessing(msg, payload) {
     const outerBox = new cv.Mat(sudoku.size(), cv.CV_8UC1)
 
     //Blur the image a little. This smooths out the noise a bit and makes extracting the grid lines easier.
-    const kSize = new cv.Size(11, 11)
-    cv.GaussianBlur(sudoku, sudoku, kSize, 0)
+    // const kSize = new cv.Size(11, 11)
+    // cv.GaussianBlur(sudoku, sudoku, kSize, 0)
 
     // With the noise smoothed out, we can now threshold the image.
     // The image can have varying illumination levels, so a good choice for a thresholding
@@ -69,6 +72,7 @@ function sudokuProcessing(msg, payload) {
     const labels = new cv.Mat()
     const stats = new cv.Mat();
     const centoids = new cv.Mat();
+    // todo figure out why result is different on first calculation than subsequent calcuations
     cv.connectedComponentsWithStats(outerBox, labels, stats, centoids, 8, cv.CV_32S)
     console.debug(stats)
 
@@ -102,13 +106,11 @@ function sudokuProcessing(msg, payload) {
             boxStats.height = height;
         }
 
-        console.debug('area of label ' + i + ' is: ' + area);
-        console.debug(width * height)
-        console.debug('Max area is ' + maxArea + ' of label ' + boxStats.label);
+        // console.debug('area of label ' + i + ' is: ' + area);
+        // console.debug(width * height)
+        // console.debug('Max area is ' + maxArea + ' of label ' + boxStats.label);
     }
 
-    console.debug(boxStats)
-    console.debug(labels)
     for (let i = 0; i < labels.data32S.length; i++) {
         if (labels.data32S[i] === boxStats.label) {
             //    color this field white in outerBox
@@ -130,15 +132,137 @@ function sudokuProcessing(msg, payload) {
     // console.debug(lines)
 
 
-    postMessage({msg, payload: imageDataFromMat(outerBox)})
+    // image	8-bit, single-channel binary source image. The image may be modified by the function.
+    // lines	Output vector of lines. Each line is represented by a 4-element vector (x1,y1,x2,y2) ,
+    // where (x1,y1) and (x2,y2) are the ending points of each detected line segment.
 
-    outerBox.delete();
-    sudoku.delete();
-    kernel.delete();
-    lines.delete();
-    centoids.delete();
-    stats.delete();
-    labels.delete();
+    // Distance resolution of the accumulator in pixels.
+    const rho = 1
+    //Angle resolution of the accumulator in radians.
+    const theta = Math.PI / 180;
+    // Accumulator threshold parameter. Only those lines are returned that get enough votes ( >𝚝𝚑𝚛𝚎𝚜𝚑𝚘𝚕𝚍 ).
+    const threshold = 2;
+
+    //values can be adapted
+    //Minimum line length. Line segments shorter than that are rejected.
+    const minLineLength = image.height * 0.2
+    // Maximum allowed gap between points on the same line to link them.
+    const maxLineGap = image.height * 0.05;
+
+    cv.HoughLinesP(outerBox, lines, rho, theta, threshold, minLineLength, maxLineGap);
+
+    console.debug(lines)
+
+    const lineMat = new cv.Mat()
+
+    // let lineArray = []
+    let pointArray = []
+
+    let color = new cv.Scalar(255, 0, 0);
+
+    const output = cv.Mat.zeros(sudoku.rows, sudoku.cols, cv.CV_8UC3);
+
+    for (let i = 0; i < lines.rows; ++i) {
+        let startPoint = new cv.Point(lines.data32S[i * 4], lines.data32S[i * 4 + 1]);
+        let endPoint = new cv.Point(lines.data32S[i * 4 + 2], lines.data32S[i * 4 + 3]);
+        // lineArray.push({
+        //     start: {x: lines.data32S[i * 4], y: lines.data32S[i * 4 + 1]},
+        //     end: {x: lines.data32S[i * 4 + 2], y: lines.data32S[i * 4 + 3]}
+        // })
+        pointArray.push({x: lines.data32S[i * 4], y: lines.data32S[i * 4 + 1]})
+        pointArray.push({x: lines.data32S[i * 4 + 2], y: lines.data32S[i * 4 + 3]})
+        cv.line(output, startPoint, endPoint, color);
+    }
+
+
+    let topLeftCorner = {x: 0, y: 0}
+    let topRightCorner = {x: image.width, y: 0}
+    let bottomLeftCorner = {x: 0, y: image.height}
+    let bottomRightCorner = {x: image.width, y: image.height}
+    // we found lines in the image, now find the corner points
+    let topLeft = {x: image.width / 2, y: image.height / 2}
+    let topRight = {x: image.width / 2, y: image.height / 2}
+    let bottomLeft = {x: image.width / 2, y: image.height / 2}
+    let bottomRight = {x: image.width / 2, y: image.height / 2}
+
+    // todo save minimal distance for optimization
+    for (let point of pointArray) {
+        if (distanceBetween(point, topLeftCorner) < distanceBetween(topLeft, topLeftCorner)) {
+            topLeft = point
+        }
+        if (distanceBetween(point, topRightCorner) < distanceBetween(topRight, topRightCorner)) {
+            topRight = point
+        }
+        if (distanceBetween(point, bottomLeftCorner) < distanceBetween(bottomLeft, bottomLeftCorner)) {
+            bottomLeft = point
+        }
+        if (distanceBetween(point, bottomRightCorner) < distanceBetween(bottomRight, bottomRightCorner)) {
+            bottomRight = point
+        }
+    }
+
+    let maxLength = -1;
+    let dist = distanceBetween(topLeft, topRight)
+    if (dist > maxLength) maxLength = dist;
+    dist = distanceBetween(topRight, bottomRight)
+    if (dist > maxLength) maxLength = dist;
+    dist = distanceBetween(bottomRight, bottomLeft)
+    if (dist > maxLength) maxLength = dist;
+    dist = distanceBetween(bottomLeft, topLeft)
+    if (dist > maxLength) maxLength = dist;
+
+    // console.debug(maxLength)
+
+
+    const src = cv.matFromArray(4, 1,cv.CV_32FC2, [
+        topLeft.x, topLeft.y, topRight.x, topRight.y,
+        bottomRight.x, bottomRight.y, bottomLeft.x, bottomLeft.y
+    ]);
+    const dst = cv.matFromArray(4, 1, cv.CV_32FC2, [
+        0, 0, maxLength - 1, 0,
+        maxLength - 1, maxLength - 1, 0, maxLength - 1]);
+    // src[0] = new cv.Point(topLeft.x, topLeft.y);
+    // src[1] = new cv.Point(topRight.x, topRight.y);
+    // src[2] = new cv.Point(bottomRight.x, bottomRight.y);
+    // src[3] = new cv.Point(bottomLeft.x, bottomLeft.y);
+    // dst[0] = new cv.Point(0, 0);
+    // dst[1] = new cv.Point(maxLength - 1, 0);
+    // dst[2] = new cv.Point(maxLength - 1, maxLength - 1);
+    // dst[3] = new cv.Point(0, maxLength - 1);
+
+    //size of the processed Sudoku
+    const newSize = new cv.Size(maxLength, maxLength)
+    //Mat of the result
+    const undistorted = new cv.Mat(newSize, cv.CV_8UC3);
+    //transformation Matrix
+    let M = cv.getPerspectiveTransform(src, dst);
+
+    cv.warpPerspective(sudoku, undistorted, M, newSize);
+
+
+
+
+    postMessage({msg, payload: imageDataFromMat(undistorted)})
+
+    // outerBox.delete();
+    // sudoku.delete();
+    // kernel.delete();
+    // lines.delete();
+    // centoids.delete();
+    // stats.delete();
+    // labels.delete();
+    // undistorted.delete();
+}
+
+/**
+ *
+ * @param {{x:number,y:number}} point1
+ * @param {{x:number,y:number}} point2
+ *
+ * @returns {number} the Distance
+ */
+function distanceBetween(point1, point2) {
+    return Math.sqrt(((point1.x - point2.x) ** 2) + ((point1.y - point2.y) ** 2))
 }
 
 /**

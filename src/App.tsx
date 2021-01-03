@@ -4,7 +4,7 @@ import './App.css';
 // import cv from './services/cv'
 import Page from "./Page";
 // import StaticImage from "./StaticImage";
-// import Sudoku from './Sudoku';
+import Sudoku from './Sudoku';
 
 function App() {
     // const [scanning, setScanning] = useState(false);
