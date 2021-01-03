@@ -6,17 +6,6 @@ import cv from './services/cv'
 const height = 800
 const width = 800
 
-/**
- * What we're going to render is:
- *
- * 1. A video component so the user can see what's on the camera.
- *
- * 2. A button to generate an image of the video, load OpenCV and
- * process the image.
- *
- * 3. A canvas to allow us to capture the image of the video and
- * show it to the user.
- */
 export default function Page() {
     const [processing, updateProcessing] = useState(false)
     const videoRef = useRef<HTMLVideoElement>(null)
