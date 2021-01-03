@@ -97,7 +97,7 @@ export default function Page() {
                     flexDirection: 'column',
                 }}
             >
-                <video style={{width: '100%'}} className="video" playsInline={true} ref={videoRef}/>
+                <video style={{width: '100%'}} className="video" autoPlay={true} playsInline={true} ref={videoRef}/>
                 <CameraSelector setStream={(stream) => setVideoStream(stream)}/>
                 <button
                     disabled={processing}

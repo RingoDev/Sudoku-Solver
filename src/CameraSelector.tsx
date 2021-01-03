@@ -7,6 +7,7 @@ interface CameraSelectorProps {
 const CameraSelector: React.FC<CameraSelectorProps> = (props) => {
 
     const selectRef = useRef<HTMLSelectElement>(null);
+    //todo change to array of MediaDevices
     const [devices, setDevices] = useState<string[]>([]);
 
     useEffect(() => {
@@ -64,7 +65,7 @@ const CameraSelector: React.FC<CameraSelectorProps> = (props) => {
                     {devices.map((deviceId, index) => {
                         return (
                             <option value={deviceId} key={deviceId}>
-                                {'camera ' + index + 1}
+                                {'camera ' + (index + 1)}
                             </option>
                         )
                     })}
