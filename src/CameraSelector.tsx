@@ -23,16 +23,15 @@ const CameraSelector: React.FC<CameraSelectorProps> = (props) => {
         if (selectElement) {
             console.debug("got here")
             console.debug(deviceInfos)
+            const newDevices = devices.slice()
             for (let i = 0; i !== deviceInfos.length; ++i) {
                 const deviceInfo = deviceInfos[i];
                 console.debug(deviceInfo)
                 if (deviceInfo.kind === 'videoinput' && !devices.includes(deviceInfo.deviceId)) {
-                    const newDevices = devices.slice()
                     newDevices.push(deviceInfo.deviceId)
-                    setDevices(newDevices);
-                    console.debug("Got here")
                 }
             }
+            setDevices(newDevices);
         }
     }
 
