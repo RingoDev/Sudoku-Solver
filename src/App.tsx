@@ -6,7 +6,7 @@ import Page from "./Page";
 function App() {
     // const [scanning, setScanning] = useState(false);
     return (
-        <div className="App">
+        <div className="App" style={{padding:'1em'}}>
 
 
             {/*<button onClick={() => setScanning(!scanning)}>Toggle Scanner</button>*/}

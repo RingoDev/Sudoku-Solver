@@ -10,6 +10,7 @@ export default function Page() {
     const [processing, updateProcessing] = useState(false)
     const videoRef = useRef<HTMLVideoElement>(null)
     const canvasRef = useRef<HTMLCanvasElement>(null)
+    const [outputURL, setOutputURL] = useState<string>();
 
     /**
      * In the onClick event we'll capture a frame within
@@ -21,6 +22,7 @@ export default function Page() {
             const canvasEl = canvasRef.current
             if (canvasEl !== null) {
                 const ctx = canvasEl.getContext('2d')
+
                 if (ctx !== null && videoRef.current !== null) {
                     ctx.drawImage(videoRef.current, 0, 0, width, height)
                     const image = ctx.getImageData(0, 0, width, height)
@@ -28,10 +30,13 @@ export default function Page() {
                     await cv.load()
                     // Processing image
                     const processedImage = await cv.sudokuProcessing(image) as { data: { payload: ImageData } }
+
                     ctx.canvas.height = processedImage.data.payload.height;
-                    ctx.canvas.width = processedImage.data.payload.width
+                    ctx.canvas.width = processedImage.data.payload.width;
+
                     // Render the processed image to the canvas
                     ctx.putImageData(processedImage.data.payload, 0, 0)
+                    setOutputURL(ctx.canvas.toDataURL());
                     updateProcessing(false)
                 }
             }
@@ -46,8 +51,6 @@ export default function Page() {
         async function initCamara() {
             const videoElement = videoRef.current;
             if (videoElement !== null) {
-                videoElement.width = width
-                videoElement.height = height
                 if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                     videoElement.srcObject = await navigator.mediaDevices.getUserMedia({
                         audio: false,
@@ -88,23 +91,27 @@ export default function Page() {
                 style={{
                     display: 'flex',
                     justifyContent: 'center',
-                    alignItems: 'center',
+                    alignItems: 'top',
                     flexDirection: 'column',
                 }}
             >
-                <video className="video" playsInline ref={videoRef}/>
+                <video style={{width: '100%'}} className="video" playsInline ref={videoRef}/>
                 <button
                     disabled={processing}
-                    style={{width: width, padding: 10}}
+                    style={{padding: 10}}
                     onClick={onClick}
                 >
                     {processing ? 'Processing...' : 'Take a photo'}
                 </button>
                 <canvas
+                    style={{display: 'none'}}
                     ref={canvasRef}
                     width={width}
                     height={height}
                 />
+                {
+                    outputURL ? (<img alt={'The undistorted snapshot'} src={outputURL}/>) : <></>
+                }
             </div>
         </>
     )
