@@ -54,7 +54,9 @@ export default function Page() {
             const videoElement = videoRef.current;
             if (videoElement !== null) {
                 if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                    videoElement.srcObject = await navigator.mediaDevices.getUserMedia({video: true,})
+                    videoElement.srcObject = await navigator.mediaDevices.getUserMedia({
+                        video: {facingMode: 'environment'}
+                    })
                     return new Promise<HTMLVideoElement | null>((resolve) => {
                         if (videoElement !== null) {
                             videoElement.onloadedmetadata = () => {
@@ -81,7 +83,7 @@ export default function Page() {
     }, [])
 
 
-    if (videoStream !== undefined && videoRef.current !== null) {
+    if (videoStream !== undefined && videoRef.current !== null && videoRef.current.srcObject !== videoStream) {
         console.debug("setting videostream to selected")
         videoRef.current.srcObject = videoStream
     }
