@@ -78,17 +78,7 @@ const CameraSelector: React.FC<CameraSelectorProps> = (props) => {
                         )
                     })}
                 </select>
-                {devices.map((info, index) => {
-                    return (
-                        <div key={index} style={{wordWrap: 'break-word'}}>
-                            <p>{info.deviceId}</p>
-                            <p>{info.groupId}</p>
-                            <p>{info.label}</p>
-                            <p>{info.kind.toString()}</p>
-                            <br/>
-                        </div>
-                    )
-                })}
+
             </div>
         </>
     )
