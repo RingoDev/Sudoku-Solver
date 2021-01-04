@@ -2,6 +2,7 @@ import React, {ChangeEvent, useEffect, useRef, useState} from "react";
 
 interface CameraSelectorProps {
     setStream: (stream: MediaStream) => void
+    stream?: MediaStream
 }
 
 const CameraSelector: React.FC<CameraSelectorProps> = (props) => {
@@ -18,6 +19,7 @@ const CameraSelector: React.FC<CameraSelectorProps> = (props) => {
     }, [])
 
     function gotDevices(deviceInfos: MediaDeviceInfo[]) {
+        console.debug(deviceInfos)
         console.debug("got devices")
         const selectElement = selectRef.current;
         if (selectElement) {
@@ -36,10 +38,9 @@ const CameraSelector: React.FC<CameraSelectorProps> = (props) => {
 
 
     function gotStream(stream: MediaStream) {
+
+        // set Stream in Parent component (and in our props)
         props.setStream(stream)
-
-        console.debug("Got a Stream")
-
 
         // Refresh button list in case labels have become available
         return navigator.mediaDevices.enumerateDevices();
@@ -50,6 +51,11 @@ const CameraSelector: React.FC<CameraSelectorProps> = (props) => {
     }
 
     function start(event: ChangeEvent<HTMLSelectElement>) {
+        // stop old stream
+        if (props.stream) {
+            props.stream.getTracks().forEach(t => t.stop())
+        }
+        // get stream for newly selected device
         navigator.mediaDevices.getUserMedia({
             video: {
                 deviceId: {exact: event.target.value}

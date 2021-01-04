@@ -92,13 +92,14 @@ export default function Page() {
             <div
                 style={{
                     display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'top',
+                    justifyContent: 'flex-start',
+                    alignItems: 'center',
                     flexDirection: 'column',
                 }}
             >
-                <video style={{width: '100%'}} className="video" autoPlay={true} playsInline={true} ref={videoRef}/>
-                <CameraSelector setStream={(stream) => setVideoStream(stream)}/>
+                <video style={{maxWidth: '1080px', width: '100%'}} className="video" autoPlay={true} playsInline={true}
+                       ref={videoRef}/>
+                <CameraSelector stream={videoStream} setStream={(stream) => setVideoStream(stream)}/>
                 <button
                     disabled={processing}
                     style={{padding: 10}}
@@ -113,7 +114,8 @@ export default function Page() {
                     height={height}
                 />
                 {
-                    outputURL ? (<img alt={'The undistorted snapshot'} src={outputURL} width={'100%'}/>) : <></>
+                    outputURL ? (<img style={{maxWidth: '1080px', width: '100%'}} alt={'The undistorted snapshot'}
+                                      src={outputURL}/>) : <></>
                 }
             </div>
         </>
