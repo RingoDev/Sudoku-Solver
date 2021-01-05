@@ -7,14 +7,6 @@ class CV {
         this._status = new Map();
         this.worker = new Worker('/js/worker.js') // load worker
 
-        this.worker.onmessage = (e) => {
-            (this._status.set(e.data.msg, ['done', e]));
-            console.log(e);
-        }
-        this.worker.onerror = (e) => {
-            (this._status.set(e.message, ['error', e]));
-            console.log(e);
-        }
     }
 
     /**

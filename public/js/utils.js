@@ -156,6 +156,7 @@ function findLines(outerBox, originalWidth, originalHeight) {
     cv.HoughLinesP(outerBox, lines, rho, theta, threshold, minLineLength, maxLineGap);
     return lines;
 }
+
 /**
  *
  * @param maxLength the complete edge Length
@@ -258,6 +259,7 @@ function preProcessing(payload) {
     sudoku.delete()
     return undistorted
 }
+
 /**
  * Extracts a digit in white (if one exists) from a Sudoku square.
  *
@@ -346,8 +348,15 @@ function extractDigit(undistorted, square) {
     }
     digit.delete();
 
+
+    const final_padding = boundingBox.cols / 10
+    // pad image with some percent to increase similarity to MNIST Dataset
+    cv.copyMakeBorder(boundingBox, boundingBox, final_padding,final_padding,final_padding,final_padding, cv.BORDER_CONSTANT, new cv.Scalar(0))
+
     // scale image to further processing size 28x28
     cv.resize(boundingBox, boundingBox, new cv.Size(28, 28), 0, 0, cv.INTER_LINEAR);
+
+
     return boundingBox;
 }
 

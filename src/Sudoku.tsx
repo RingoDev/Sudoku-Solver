@@ -1,9 +1,12 @@
 import React, {useRef, useState} from 'react'
 import {Button} from 'reactstrap'
 import cv from './services/cv'
+import SudokuGrid from "./SudokuGrid";
 
 const height = 800
 const width = 800
+
+const emptySudoku = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
 
 export default function Sudoku() {
@@ -16,6 +19,7 @@ export default function Sudoku() {
     const displayCanvasRef = useRef<HTMLCanvasElement>(null)
     const [outputURL, setOutputURL] = useState<string>();
     const imgElement = useRef<HTMLImageElement>(null);
+    const [predictions, setPredictions] = useState<number[][]>()
 
     async function onClick() {
         updateProcessing(true)
@@ -32,14 +36,15 @@ export default function Sudoku() {
                 await cv.load()
                 // Processing image
 
-                const processedImage = await cv.sudokuProcessing(image) as { data: { payload: ImageData } }
+                const result = await cv.sudokuProcessing(image) as { data: { payload: ImageData, predictions: number[][] } }
 
-                ctx2.canvas.height = processedImage.data.payload.height;
-                ctx2.canvas.width = processedImage.data.payload.width
+                ctx2.canvas.height = result.data.payload.height;
+                ctx2.canvas.width = result.data.payload.width
                 // Render the processed image to the canvas
-                ctx2.putImageData(processedImage.data.payload, 0, 0)
+                ctx2.putImageData(result.data.payload, 0, 0)
                 setOutputURL(ctx2.canvas.toDataURL());
                 updateProcessing(false)
+                setPredictions(result.data.predictions)
             }
         }
 
@@ -81,6 +86,7 @@ export default function Sudoku() {
                 />
 
             </div>
+            <SudokuGrid sudoku={predictions ? predictions : emptySudoku}/>
             {
                 outputURL ? (<img style={{maxWidth: '1080px', width: '100%'}} alt={'The undistorted snapshot'}
                                   src={outputURL}/>) : <></>

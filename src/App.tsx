@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import Page from './Page';
+import Scanner from './Scanner';
 import Sudoku from './Sudoku';
 import {BrowserRouter as Router, Switch, Route, NavLink} from "react-router-dom";
 import {Navbar, NavbarBrand} from "reactstrap";
@@ -13,8 +13,8 @@ function App() {
                 <Navbar expand={true} light={true} className="static-top">
                     <NavbarBrand href={"/"} className={"mr-auto"}>Sudoku Solver</NavbarBrand>
                     <ul className="navbar-nav ml-auto">
-                        <NavLink className={"nav-link"} to={"/picture"}>Picture</NavLink>
-                        <NavLink className={"nav-link"} to={"/scanner"}>Scanner</NavLink>
+                        <li><NavLink className={"nav-link"} to={"/picture"}>Picture</NavLink></li>
+                        <li><NavLink className={"nav-link"} to={"/scanner"}>Scanner</NavLink></li>
                     </ul>
                 </Navbar>
 
@@ -22,7 +22,7 @@ function App() {
 
                     <Switch>
                         <Route path="/scanner">
-                            <Page/>
+                            <Scanner/>
                         </Route>
                         <Route path="/picture">
                             <Sudoku/>
