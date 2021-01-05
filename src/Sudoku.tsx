@@ -1,4 +1,5 @@
 import React, {useRef, useState} from 'react'
+import {Button} from 'reactstrap'
 import cv from './services/cv'
 
 const height = 800
@@ -46,7 +47,9 @@ export default function Sudoku() {
 
     return (
         <>
-            <img alt={"Test"} width={width} height={height} src={'img/sudoku-original.jpg'} ref={imgElement}/>
+            <img style={{display: 'none'}} alt={"Test"} width={width} height={height} src={'img/sudoku-original.jpg'}
+                 ref={imgElement}/>
+            <img style={{maxWidth: '100%'}} alt={"Test"} src={'img/sudoku-original.jpg'}/>
             <div
                 style={{
                     display: 'flex',
@@ -56,13 +59,13 @@ export default function Sudoku() {
                 }}
             >
                 {/*<video className="video" playsInline ref={videoElement}/>*/}
-                <button
+                <Button
                     disabled={processing}
-                    style={{width: width, padding: 10}}
+                    style={{padding: 10}}
                     onClick={onClick}
                 >
                     {processing ? 'Processing...' : 'Convert'}
-                </button>
+                </Button>
 
                 <canvas
                     style={{display: 'none'}}
