@@ -3,14 +3,19 @@ import cv from './services/cv'
 import CameraSelector from "./CameraSelector";
 
 
-// We'll limit the processing size to 200px.
 const height = 800
 const width = 800
 
 export default function Page() {
     const [processing, updateProcessing] = useState(false)
     const videoRef = useRef<HTMLVideoElement>(null)
+
+    // Canvas for converting input image to ImageData
     const canvasRef = useRef<HTMLCanvasElement>(null)
+
+    // Canvas for drawing result
+    const displayCanvasRef = useRef<HTMLCanvasElement>(null)
+
     const [outputURL, setOutputURL] = useState<string>();
     const [videoStream, setVideoStream] = useState<MediaStream | undefined>(undefined);
 
@@ -20,28 +25,28 @@ export default function Page() {
      */
     async function onClick() {
         updateProcessing(true)
-        if (canvasRef !== null) {
-            const canvasEl = canvasRef.current
-            if (canvasEl !== null) {
-                const ctx = canvasEl.getContext('2d')
+        const canvasEl = canvasRef.current
+        const displayCanvas = displayCanvasRef.current
+        if (canvasEl !== null && displayCanvas !== null) {
+            const ctx = canvasEl.getContext('2d')
+            const ctx2 = displayCanvas.getContext('2d')
+            if (ctx !== null && videoRef.current !== null && ctx2 !== null) {
+                ctx.drawImage(videoRef.current, 0, 0, width, height)
+                const image = ctx.getImageData(0, 0, width, height)
+                // Load the model
+                await cv.load()
+                // Processing image
+                const processedImage = await cv.sudokuProcessing(image) as { data: { payload: ImageData } }
 
-                if (ctx !== null && videoRef.current !== null) {
-                    ctx.drawImage(videoRef.current, 0, 0, width, height)
-                    const image = ctx.getImageData(0, 0, width, height)
-                    // Load the model
-                    await cv.load()
-                    // Processing image
-                    const processedImage = await cv.sudokuProcessing(image) as { data: { payload: ImageData } }
+                ctx2.canvas.height = processedImage.data.payload.height;
+                ctx2.canvas.width = processedImage.data.payload.width;
 
-                    ctx.canvas.height = processedImage.data.payload.height;
-                    ctx.canvas.width = processedImage.data.payload.width;
-
-                    // Render the processed image to the canvas
-                    ctx.putImageData(processedImage.data.payload, 0, 0)
-                    setOutputURL(ctx.canvas.toDataURL());
-                    updateProcessing(false)
-                }
+                // Render the processed image to the canvas
+                ctx2.putImageData(processedImage.data.payload, 0, 0)
+                setOutputURL(ctx2.canvas.toDataURL());
+                updateProcessing(false)
             }
+
         }
     }
 
@@ -112,6 +117,12 @@ export default function Page() {
                 <canvas
                     style={{display: 'none'}}
                     ref={canvasRef}
+                    width={width}
+                    height={height}
+                />
+                <canvas
+                    style={{display: 'none'}}
+                    ref={displayCanvasRef}
                     width={width}
                     height={height}
                 />
