@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useEffect, useRef, useState} from "react";
+import React from "react";
 import {Col, Container, Row} from "reactstrap";
 
 interface SudokuGridProps {
