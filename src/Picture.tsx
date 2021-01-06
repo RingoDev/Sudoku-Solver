@@ -1,5 +1,5 @@
 import React, {useRef, useState} from 'react'
-import {Button} from 'reactstrap'
+import {Button, Collapse} from 'reactstrap'
 import cv from './services/cv'
 import SudokuGrid from "./SudokuGrid";
 import Sudoku from "./Sudoku";
@@ -19,6 +19,11 @@ export default function Picture() {
     // const [outputURL, setOutputURL] = useState<string>();
     const imgElement = useRef<HTMLImageElement>(null);
     const [predictions, setPredictions] = useState<Sudoku>(new Sudoku())
+
+    const [isOpen, setIsOpen] = useState(false);
+
+    const toggle = () => setIsOpen(!isOpen);
+
 
     async function onClick() {
         updateProcessing(true)
@@ -53,7 +58,6 @@ export default function Picture() {
         <>
             <img style={{display: 'none'}} alt={"Test"} width={width} height={height} src={'img/sudoku-original.jpg'}
                  ref={imgElement}/>
-            <img style={{display: 'none',maxWidth: '100%'}} alt={"Test"} src={'img/sudoku-original.jpg'}/>
             <div
                 style={{
                     display: 'flex',
@@ -62,14 +66,30 @@ export default function Picture() {
                     flexDirection: 'column',
                 }}
             >
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                    }}
+                ><Button color="primary" onClick={toggle} style={{margin:'1rem'}}>Toggle</Button>
+                    <Button
+                        color={'info'}
+                        disabled={processing}
+                        style={{margin:'1rem'}}
+                        onClick={onClick}
+                    >
+                        {processing ? 'Processing...' : 'Convert'}
+                    </Button></div>
+
+                <Collapse isOpen={isOpen}>
+                    <img style={{maxWidth: '100%'}} alt={"Test"} src={'img/sudoku-original.jpg'}/>
+                </Collapse>
+
+
                 {/*<video className="video" playsInline ref={videoElement}/>*/}
-                <Button
-                    disabled={processing}
-                    style={{padding: 10}}
-                    onClick={onClick}
-                >
-                    {processing ? 'Processing...' : 'Convert'}
-                </Button>
+
 
                 <canvas
                     style={{display: 'none'}}
