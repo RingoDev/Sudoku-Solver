@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import Scanner from './Scanner';
-import Sudoku from './Sudoku';
+import Picture from './Picture';
 import {BrowserRouter as Router, Switch, Route, NavLink} from "react-router-dom";
 import {Navbar, NavbarBrand} from "reactstrap";
 
@@ -25,11 +25,11 @@ function App() {
                             <Scanner/>
                         </Route>
                         <Route path="/picture">
-                            <Sudoku/>
+                            <Picture/>
 
                         </Route>
                         <Route path="/">
-                            <Sudoku/>
+                            <Picture/>
                         </Route>
                     </Switch>
 

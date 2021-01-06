@@ -2,8 +2,7 @@ import React, {useEffect, useRef, useState} from 'react'
 import cv from './services/cv'
 import CameraSelector from "./CameraSelector";
 import SudokuGrid from "./SudokuGrid";
-
-const emptySudoku = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+import Sudoku from "./Sudoku";
 
 const height = 800
 const width = 800
@@ -20,7 +19,7 @@ export default function Scanner() {
 
     const [outputURL, setOutputURL] = useState<string>();
     const [videoStream, setVideoStream] = useState<MediaStream | undefined>(undefined);
-    const [predictions, setPredictions] = useState<number[][]>()
+    const [predictions, setPredictions] = useState<Sudoku>(new Sudoku())
 
     /**
      * In the onClick event we'll capture a frame within
@@ -48,7 +47,8 @@ export default function Scanner() {
                 ctx2.putImageData(result.data.payload, 0, 0)
                 setOutputURL(ctx2.canvas.toDataURL());
                 updateProcessing(false)
-                setPredictions(result.data.predictions)
+                predictions.set(result.data.predictions)
+                setPredictions(predictions)
             }
 
         }
@@ -130,7 +130,7 @@ export default function Scanner() {
                     width={width}
                     height={height}
                 />
-                <SudokuGrid sudoku={predictions ? predictions : emptySudoku}/>
+                <SudokuGrid sudoku={predictions}/>
                 {
                     outputURL ? (<img style={{maxWidth: '1080px', width: '100%'}} alt={'The undistorted snapshot'}
                                       src={outputURL}/>) : <></>

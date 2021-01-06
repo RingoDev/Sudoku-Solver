@@ -17,33 +17,7 @@ function imageProcessing(msg, payload) {
     postMessage({msg, payload: imageDataFromMat(result)})
 }
 
-/**
- *
- * @param {string} msg
- * @param {ImageData} payload
- *
- * @returns {void}
- */
-async function sudokuProcessing(msg, payload) {
-
-    const resolveTF = tf.loadLayersModel('model/model.json');
-
-    const undistorted = preProcessing(payload);
-
-    // try to fetch out single digits
-    // Infers 81 cell grid from a square image.
-
-    const squares = getSquares(undistorted.rows);
-
-    const digits = []
-    for (let square of squares) {
-        digits.push(extractDigit(undistorted, square))
-    }
-
-    console.debug(digits)
-
-    const tfModel = await resolveTF;
-
+async function getPredictions(digits, tfModel) {
     const numbers = [];
 
     for (let i = 0; i < 9; i++) {
@@ -59,7 +33,7 @@ async function sudokuProcessing(msg, payload) {
             if (!isBlack) {
 
                 const tensor = tfModel.predict([tf.tensor(input).reshape([1, 28, 28, 1])])
-                const scores = await(tensor.array())
+                const scores = await (tensor.array())
                 const predicted = scores[0].indexOf(Math.max(...scores[0]));
 
                 sudokuCol.push(predicted)
@@ -72,8 +46,32 @@ async function sudokuProcessing(msg, payload) {
         }
         numbers.push(sudokuCol)
     }
+    return numbers;
+}
 
-    console.debug(numbers)
+/**
+ *
+ * @param {string} msg
+ * @param {ImageData} payload
+ *
+ * @returns {void}
+ */
+async function sudokuProcessing(msg, payload) {
+
+    const resolveTF = tf.loadLayersModel('model/model.json');
+
+    const undistorted = preProcessing(payload);
+
+    // try to fetch out single digits
+    const squares = getSquares(undistorted.rows);
+
+    const digits = []
+    for (let square of squares) {
+        digits.push(extractDigit(undistorted, square))
+    }
+
+    const tfModel = await resolveTF;
+    const numbers = await getPredictions(digits, tfModel);
 
     const result = combineDigits(digits);
 

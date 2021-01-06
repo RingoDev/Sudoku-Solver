@@ -238,7 +238,7 @@ function preProcessing(payload) {
     const maxLength = getMaxLength(corners);
     const M = getTransformationMatrix(corners, maxLength);
 
-    //size of the processed Sudoku
+    //size of the processed Picture
     const newSize = new cv.Size(maxLength, maxLength)
     //Mat of the result
     const undistorted = new cv.Mat(newSize, cv.CV_8UC3);
@@ -261,7 +261,7 @@ function preProcessing(payload) {
 }
 
 /**
- * Extracts a digit in white (if one exists) from a Sudoku square.
+ * Extracts a digit in white (if one exists) from a Picture square.
  *
  * @param undistorted {cv.Mat}
  * @param square {{p1:{x,y},p2:{x,y}}}

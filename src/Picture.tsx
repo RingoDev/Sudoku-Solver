@@ -2,14 +2,13 @@ import React, {useRef, useState} from 'react'
 import {Button} from 'reactstrap'
 import cv from './services/cv'
 import SudokuGrid from "./SudokuGrid";
+import Sudoku from "./Sudoku";
 
 const height = 800
 const width = 800
 
-const emptySudoku = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
-
-export default function Sudoku() {
+export default function Picture() {
     const [processing, updateProcessing] = useState(false)
 
     // Canvas for converting input image to ImageData
@@ -17,9 +16,9 @@ export default function Sudoku() {
 
     // Canvas for drawing result
     const displayCanvasRef = useRef<HTMLCanvasElement>(null)
-    const [outputURL, setOutputURL] = useState<string>();
+    // const [outputURL, setOutputURL] = useState<string>();
     const imgElement = useRef<HTMLImageElement>(null);
-    const [predictions, setPredictions] = useState<number[][]>()
+    const [predictions, setPredictions] = useState<Sudoku>(new Sudoku())
 
     async function onClick() {
         updateProcessing(true)
@@ -42,9 +41,9 @@ export default function Sudoku() {
                 ctx2.canvas.width = result.data.payload.width
                 // Render the processed image to the canvas
                 ctx2.putImageData(result.data.payload, 0, 0)
-                setOutputURL(ctx2.canvas.toDataURL());
+                // setOutputURL(ctx2.canvas.toDataURL());
                 updateProcessing(false)
-                setPredictions(result.data.predictions)
+                setPredictions(new Sudoku().set(result.data.predictions))
             }
         }
 
@@ -54,7 +53,7 @@ export default function Sudoku() {
         <>
             <img style={{display: 'none'}} alt={"Test"} width={width} height={height} src={'img/sudoku-original.jpg'}
                  ref={imgElement}/>
-            <img style={{maxWidth: '100%'}} alt={"Test"} src={'img/sudoku-original.jpg'}/>
+            <img style={{display: 'none',maxWidth: '100%'}} alt={"Test"} src={'img/sudoku-original.jpg'}/>
             <div
                 style={{
                     display: 'flex',
@@ -86,11 +85,11 @@ export default function Sudoku() {
                 />
 
             </div>
-            <SudokuGrid sudoku={predictions ? predictions : emptySudoku}/>
-            {
-                outputURL ? (<img style={{maxWidth: '1080px', width: '100%'}} alt={'The undistorted snapshot'}
-                                  src={outputURL}/>) : <></>
-            }
+            <SudokuGrid sudoku={predictions}/>
+            {/*{*/}
+            {/*    outputURL ? (<img style={{maxWidth: '1080px', width: '100%'}} alt={'The undistorted snapshot'}*/}
+            {/*                      src={outputURL}/>) : <></>*/}
+            {/*}*/}
         </>
     )
 }
