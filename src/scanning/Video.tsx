@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react'
 import cv from '../services/cv'
 import CameraSelector from "./CameraSelector";
-import {Button, Collapse} from 'reactstrap';
+import {Button} from 'reactstrap';
 import SudokuGrid from "../components/SudokuGrid";
 import {digit, sudoku} from "../solving/SudokuUtils";
 import SudokuUtils from "../solving/SudokuUtils";
@@ -20,7 +20,7 @@ export default function Video() {
     // Canvas for drawing result
     const displayCanvasRef = useRef<HTMLCanvasElement>(null)
 
-    const [outputURL, setOutputURL] = useState<string>();
+    // const [outputURL, setOutputURL] = useState<string>();
     const [videoStream, setVideoStream] = useState<MediaStream | undefined>(undefined);
     const [predictions, setPredictions] = useState<sudoku>(SudokuUtils.getEmpty())
 
@@ -50,7 +50,7 @@ export default function Video() {
 
                 // Render the processed image to the canvas
                 ctx2.putImageData(result.data.payload, 0, 0)
-                setOutputURL(ctx2.canvas.toDataURL());
+                // setOutputURL(ctx2.canvas.toDataURL());
                 updateProcessing(false)
                 setPredictions(result.data.predictions)
             }

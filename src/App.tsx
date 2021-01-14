@@ -15,6 +15,7 @@ function App() {
                     <ul className="navbar-nav ml-auto">
                         <li><NavLink className={"nav-link"} to={"/solver"}>Solver</NavLink></li>
                         <li><NavLink className={"nav-link"} to={"/scanner"}>Scanner</NavLink></li>
+                        <li><NavLink className={"nav-link"} to={"/scanner/video"}>Video</NavLink></li>
                     </ul>
                 </Navbar>
 
