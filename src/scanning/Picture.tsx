@@ -23,8 +23,6 @@ export default function Picture() {
 
     const [isOpen, setIsOpen] = useState<boolean>(false);
 
-    const [numPad, setNumPad] = useState<boolean>(false);
-
     const [selectedNum, setSelectedNum] = useState<[number, number]>([-1, -1])
 
     const toggle = () => setIsOpen(!isOpen);
@@ -127,20 +125,12 @@ export default function Picture() {
                 />
 
                 <SudokuGrid selected={selectedNum} setNumber={(n: digit) => changeNumber(n)} sudoku={predictions}
-                            setSelected={(i, j) => {
-                                setNumPad(true);
-                                setSelectedNum([i, j])
-                            }}/>
+                            setSelected={(i, j) => {setSelectedNum([i, j])}}/>
                 {/*{*/}
                 {/*    outputURL ? (<img style={{maxWidth: '1080px', width: '100%'}} alt={'The undistorted snapshot'}*/}
                 {/*                      src={outputURL}/>) : <></>*/}
                 {/*}*/}
 
-                <Collapse isOpen={numPad}>
-
-                    {/*<NumPad setNumber={(n:digit) => changeNumber(n)}/>*/}
-
-                </Collapse>
                 <Button color={'info'}
                         style={{margin: '1rem'}}
                         onClick={solveSudoku}

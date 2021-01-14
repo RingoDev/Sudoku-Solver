@@ -1,8 +1,11 @@
 import React, {useEffect, useRef, useState} from 'react'
 import cv from '../services/cv'
 import CameraSelector from "./CameraSelector";
-import {Button} from 'reactstrap';
-// import SudokuUtils from "../solving/SudokuUtils";
+import {Button, Collapse} from 'reactstrap';
+import SudokuGrid from "../components/SudokuGrid";
+import {digit, sudoku} from "../solving/SudokuUtils";
+import SudokuUtils from "../solving/SudokuUtils";
+import {solve} from "../solving/solver";
 
 const height = 800
 const width = 800
@@ -19,7 +22,9 @@ export default function Video() {
 
     const [outputURL, setOutputURL] = useState<string>();
     const [videoStream, setVideoStream] = useState<MediaStream | undefined>(undefined);
-    // const [predictions, setPredictions] = useState<number[][]>(SudokuUtils.getEmpty())
+    const [predictions, setPredictions] = useState<sudoku>(SudokuUtils.getEmpty())
+
+    const [selectedNum, setSelectedNum] = useState<[number, number]>([-1, -1])
 
     /**
      * In the onClick event we'll capture a frame within
@@ -38,7 +43,7 @@ export default function Video() {
                 // Load the model
                 await cv.load()
                 // Processing image
-                const result = await cv.sudokuProcessing(image) as { data: { payload: ImageData, predictions: number[][] } }
+                const result = await cv.sudokuProcessing(image) as { data: { payload: ImageData, predictions: digit[][] } }
 
                 ctx2.canvas.height = result.data.payload.height;
                 ctx2.canvas.width = result.data.payload.width;
@@ -47,7 +52,7 @@ export default function Video() {
                 ctx2.putImageData(result.data.payload, 0, 0)
                 setOutputURL(ctx2.canvas.toDataURL());
                 updateProcessing(false)
-                // setPredictions(result.data.predictions)
+                setPredictions(result.data.predictions)
             }
         }
     }
@@ -95,6 +100,21 @@ export default function Video() {
         videoRef.current.srcObject = videoStream
     }
 
+    const changeNumber = (n: digit) => {
+
+        if (selectedNum) {
+            //change selected Num in Sudoku to number
+            const newPred = predictions.slice();
+            newPred[selectedNum[0]][selectedNum[1]] = n
+            setPredictions(newPred)
+            console.debug('changednumber', selectedNum, n)
+        }
+    }
+
+    const solveSudoku = () => {
+        setPredictions(solve(predictions))
+    }
+
 
     return (
         <>
@@ -128,12 +148,17 @@ export default function Video() {
                     width={width}
                     height={height}
                 />
-                {/*<SudokuGrid selected={sele} sudoku={predictions} setSelected={(j, k) => {*/}
-                {/*}}/>*/}
-                {
-                    outputURL ? (<img style={{maxWidth: '1080px', width: '100%'}} alt={'The undistorted snapshot'}
-                                      src={outputURL}/>) : <></>
-                }
+                <SudokuGrid selected={selectedNum} setNumber={(n: digit) => changeNumber(n)} sudoku={predictions}
+                            setSelected={(i, j) => {                                setSelectedNum([i, j])}}/>
+                {/*{*/}
+                {/*    outputURL ? (<img style={{maxWidth: '1080px', width: '100%'}} alt={'The undistorted snapshot'}*/}
+                {/*                      src={outputURL}/>) : <></>*/}
+                {/*}*/}
+
+                <Button color={'info'}
+                        style={{margin: '1rem'}}
+                        onClick={solveSudoku}
+                >Solve</Button>
             </div>
         </>
     )
