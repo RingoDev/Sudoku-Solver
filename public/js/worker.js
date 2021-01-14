@@ -58,7 +58,10 @@ async function getPredictions(digits, tfModel) {
  */
 async function sudokuProcessing(msg, payload) {
 
-    const resolveTF = tf.loadLayersModel('model/model.json');
+    let resolveTF;
+    if(tfModel === undefined){
+        resolveTF = tf.loadLayersModel('model/model.json');
+    }
 
     const undistorted = preProcessing(payload);
 
@@ -70,7 +73,10 @@ async function sudokuProcessing(msg, payload) {
         digits.push(extractDigit(undistorted, square))
     }
 
-    const tfModel = await resolveTF;
+    if(tfModel === undefined){
+        tfModel = await resolveTF;
+    }
+
     const numbers = await getPredictions(digits, tfModel);
 
     const result = combineDigits(digits);
