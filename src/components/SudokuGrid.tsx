@@ -1,6 +1,6 @@
 import React from "react";
 import {Table} from "reactstrap";
-import SudokuUtils, {sudoku, digit} from "../solving/SudokuUtils";
+import {sudoku, digit, byFields} from "../solving/SudokuUtils";
 import SudokuSingle from "./SudokuSingle";
 
 
@@ -17,7 +17,7 @@ const SudokuGrid: React.FC<SudokuGridProps> = (props) => {
             <div style={{display: 'flex', justifyContent: 'center'}}>
                 <Table bordered={true} style={{width: 'auto', borderWidth: '4px', tableLayout: 'fixed'}}>
                     <tbody>
-                    {SudokuUtils.byFields(props.sudoku).map((bigRow, i) => (
+                    {byFields(props.sudoku).map((bigRow, i) => (
                         <tr key={i}>
                             {bigRow.map((field, j) => (
                                 <td key={j} style={{padding: 0}}>

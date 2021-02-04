@@ -4,10 +4,13 @@ import './index.css';
 import App from './App';
 import 'jquery/dist/jquery.min'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import {BrowserRouter as Router} from "react-router-dom";
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+    <React.StrictMode>
+        <Router>
+            <App/>
+        </Router>
+    </React.StrictMode>,
+    document.getElementById('root')
 );

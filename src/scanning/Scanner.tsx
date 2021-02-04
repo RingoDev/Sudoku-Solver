@@ -1,26 +1,24 @@
 import React from "react";
+import Video from "./Video";
+import {sudoku} from "../solving/SudokuUtils";
 import {Route, Switch} from "react-router-dom";
 import Picture from "./Picture";
-import Video from "./Video";
 
-const Scanner: React.FC = () => {
+interface ScannerProps {
+    solveSudoku: (val: sudoku) => void
+}
+
+const Scanner: React.FC<ScannerProps> = (props) => {
     return (
         <>
             <Switch>
-                <Route path="/scanner/video">
-                    <Video/>
-                </Route>
-                <Route path="/scanner/picture">
-                    <Picture/>
-                </Route>
-                <Route path={"/scanner"}>
-                    <Picture/>
+                <Route path={"/scan/picture"}>
+                    <Picture solveSudoku={props.solveSudoku}/>
                 </Route>
                 <Route path={"/"}>
-                    <Picture/>
+                    <Video solveSudoku={props.solveSudoku}/>
                 </Route>
             </Switch>
-
         </>
     )
 }

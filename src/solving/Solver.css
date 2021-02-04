@@ -1,0 +1,14 @@
+.controls{
+    z-index: 15;
+    position: fixed;
+    bottom: 0;
+    left:0;
+    width:100%;
+    display: flex;
+    justify-content: space-evenly;
+}
+.control-btn{
+    font-size: 2rem !important;
+    margin-bottom: 0.2em !important;
+}
+

@@ -2,6 +2,7 @@
 
 let cvReady = false;
 let tfModel;
+let loading = false;
 
 /**
  * With OpenCV we have to work with the images as cv.Mat (matrices),
@@ -59,7 +60,7 @@ async function getPredictions(digits, tfModel) {
 async function sudokuProcessing(msg, payload) {
 
     let resolveTF;
-    if(tfModel === undefined){
+    if (tfModel === undefined) {
         resolveTF = tf.loadLayersModel('model/model.json');
     }
 
@@ -73,7 +74,7 @@ async function sudokuProcessing(msg, payload) {
         digits.push(extractDigit(undistorted, square))
     }
 
-    if(tfModel === undefined){
+    if (tfModel === undefined) {
         tfModel = await resolveTF;
     }
 
@@ -135,7 +136,7 @@ function imageDataFromMat(mat) {
  */
 self.addEventListener('message', (e) => {
     if (e.data.msg !== 'load' && !cvReady) {
-        // postmessage that opencv is still loading or have some kind of queue
+        postMessage({msg: e.data.msg, error: true})
         return
     }
     switch (e.data.msg) {
@@ -144,6 +145,8 @@ self.addEventListener('message', (e) => {
                 postMessage({msg: e.data.msg})
                 return;
             }
+            if (loading) return
+            loading = true;
             // Import Webassembly script
             console.log("Loading OpenCV from SW")
             // eslint-disable-next-line no-restricted-globals

@@ -38,7 +38,7 @@ const SudokuSingle: React.FC<SudokuSingleProps> = (props) => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     textAlign: 'center',
-                    fontSize: 'min(4vw,50px)',
+                    fontSize: 'min(3vw,54px)',
                 }}/>
             </>
         )

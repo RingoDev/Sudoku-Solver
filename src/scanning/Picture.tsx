@@ -1,15 +1,17 @@
 import React, {useRef, useState} from 'react'
-import {Button, Collapse} from 'reactstrap'
+import {Button} from 'reactstrap'
 import cv from '../services/cv'
 import SudokuGrid from "../components/SudokuGrid";
-import SudokuUtils, {digit, sudoku} from "../solving/SudokuUtils";
-import {solve} from "../solving/solver";
+import {digit, getEmpty, sudoku} from "../solving/SudokuUtils";
 
 const height = 800
 const width = 800
 
+interface PictureProps {
+    solveSudoku: (val: sudoku) => void
+}
 
-export default function Picture() {
+const Picture: React.FC<PictureProps> = (props) => {
     const [processing, updateProcessing] = useState(false)
 
     // Canvas for converting input image to ImageData
@@ -19,13 +21,13 @@ export default function Picture() {
     const displayCanvasRef = useRef<HTMLCanvasElement>(null)
     // const [outputURL, setOutputURL] = useState<string>();
     const imgElement = useRef<HTMLImageElement>(null);
-    const [predictions, setPredictions] = useState<sudoku>(SudokuUtils.getEmpty())
+    const [predictions, setPredictions] = useState<sudoku>(getEmpty())
 
-    const [isOpen, setIsOpen] = useState<boolean>(false);
+    // const [isOpen, setIsOpen] = useState<boolean>(false);
 
     const [selectedNum, setSelectedNum] = useState<[number, number]>([-1, -1])
 
-    const toggle = () => setIsOpen(!isOpen);
+    // const toggle = () => setIsOpen(!isOpen);
 
 
     async function onClick() {
@@ -68,13 +70,10 @@ export default function Picture() {
         }
     }
 
-    const solveSudoku = () => {
-        setPredictions(solve(predictions))
-    }
 
     return (
         <>
-            <img style={{display: 'none'}} alt={"Test"} width={width} height={height} src={'img/sudoku-original.jpg'}
+            <img style={{display: 'none'}} alt={"Test"} width={width} height={height} src={'/img/sudoku-original.jpg'}
                  ref={imgElement}/>
             <div
                 style={{
@@ -91,7 +90,8 @@ export default function Picture() {
                         alignItems: 'center',
                         flexDirection: 'row',
                     }}
-                ><Button color="primary" onClick={toggle} style={{margin: '1rem'}}>Toggle</Button>
+                >
+                    {/*<Button color="primary" onClick={toggle} style={{margin: '1rem'}}>Toggle</Button>*/}
                     <Button
                         color={'info'}
                         disabled={processing}
@@ -103,9 +103,8 @@ export default function Picture() {
 
                 </div>
 
-                <Collapse isOpen={isOpen}>
-                    <img style={{maxWidth: '100%'}} alt={"Test"} src={'img/sudoku-original.jpg'}/>
-                </Collapse>
+
+                <img style={{maxWidth: '100%'}} alt={"Test"} src={'/img/sudoku-original.jpg'}/>
 
 
                 {/*<video className="video" playsInline ref={videoElement}/>*/}
@@ -125,7 +124,9 @@ export default function Picture() {
                 />
 
                 <SudokuGrid selected={selectedNum} setNumber={(n: digit) => changeNumber(n)} sudoku={predictions}
-                            setSelected={(i, j) => {setSelectedNum([i, j])}}/>
+                            setSelected={(i, j) => {
+                                setSelectedNum([i, j])
+                            }}/>
                 {/*{*/}
                 {/*    outputURL ? (<img style={{maxWidth: '1080px', width: '100%'}} alt={'The undistorted snapshot'}*/}
                 {/*                      src={outputURL}/>) : <></>*/}
@@ -133,7 +134,7 @@ export default function Picture() {
 
                 <Button color={'info'}
                         style={{margin: '1rem'}}
-                        onClick={solveSudoku}
+                        onClick={() => props.solveSudoku(predictions)}
                 >Solve</Button>
             </div>
 
@@ -141,3 +142,4 @@ export default function Picture() {
         </>
     )
 }
+export default Picture

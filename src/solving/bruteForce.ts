@@ -1,8 +1,8 @@
-import {digit, sudoku} from "./SudokuUtils";
+import {copy, digit, sudoku} from "./SudokuUtils";
 
-
-export function solve(input: sudoku) {
-    const sudoku = input.slice()
+// todo dont change input sudoku
+export function bruteForce(input: sudoku) {
+    const sudoku = copy(input)
     const solution = solveRecursively(sudoku)
     console.debug("Found solution", solution)
     return solution;
@@ -46,6 +46,7 @@ export function solveRecursively(sudoku: sudoku): sudoku {
 function isValid(sudoku: sudoku, row: number, column: number, value: digit) {
     return validateColumn(sudoku, column, value) && validateRow(sudoku, row, value) && validateField(sudoku, row, column, value)
 }
+
 //
 // function simplifyRows(sudoku: sudoku) {
 //     const result = sudoku.slice();

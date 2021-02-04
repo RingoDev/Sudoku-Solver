@@ -16,6 +16,9 @@ class CV {
      */
     _dispatch(event: { msg: string, data?: any }) {
         const {msg} = event
+        if(this._status.get(msg)){
+            // we already posted this message and worker is busy right now, what do we do with it?
+        }
         this._status.set(msg, ['loading', undefined])
         if (this.worker) {
             console.debug("Dispatching event to Serviceworker", event)
@@ -48,12 +51,16 @@ class CV {
         if (this.worker) {
             // Capture events and save [status, event] inside the _status object
             this.worker.onmessage = (e) => {
-                (this._status.set(e.data.msg, ['done', e]));
-                console.log(e);
+                if(e.data.error){
+                    (this._status.set(e.data.msg, ['error', e]));
+                }else{
+                    (this._status.set(e.data.msg, ['done', e]));
+                }
+                console.debug(e);
             }
             this.worker.onerror = (e) => {
                 (this._status.set(e.message, ['error', e]));
-                console.log(e);
+                console.debug(e);
             }
         }
         return this._dispatch({msg: 'load'})

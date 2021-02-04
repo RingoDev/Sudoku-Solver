@@ -1,38 +1,44 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './App.css';
-import {BrowserRouter as Router, Switch, Route, NavLink} from "react-router-dom";
+import { NavLink, Switch, Route, useHistory} from "react-router-dom";
 import {Navbar, NavbarBrand} from "reactstrap";
 import Scanner from './scanning/Scanner';
 import Solver from './solving/Solver';
+import {fromString, sudoku} from "./solving/SudokuUtils";
+import {samples} from "./solving/sampleSudokus";
 
-function App() {
+const App: React.FC = () => {
+
+    const [current, setCurrent] = useState<sudoku>()
+    const history = useHistory();
+
+    const solveSudoku = (sudoku: sudoku) => {
+        setCurrent(sudoku);
+        history.push("/solve")
+    }
+
     return (
         <>
-            <Router>
 
                 <Navbar expand={true} light={true} className="static-top">
                     <NavbarBrand href={"/"} className={"mr-auto"}>Sudoku Solver</NavbarBrand>
                     <ul className="navbar-nav ml-auto">
-                        <li><NavLink className={"nav-link"} to={"/solver"}>Solver</NavLink></li>
-                        <li><NavLink className={"nav-link"} to={"/scanner"}>Scanner</NavLink></li>
-                        <li><NavLink className={"nav-link"} to={"/scanner/video"}>Video</NavLink></li>
+                        <li><NavLink className={"nav-link"} to={"/solve"}>Solver</NavLink></li>
+                        <li><NavLink className={"nav-link"} to={"/scan"}>Scanner</NavLink></li>
+                        <li><NavLink className={"nav-link"} to={"/scan/picture"}>Picture</NavLink></li>
                     </ul>
                 </Navbar>
 
                 <div className="App" style={{padding: '1em'}}>
                     <Switch>
-                        <Route path="/scanner">
-                            <Scanner/>
+                        <Route path={"/solve"}>
+                            {!current ? <Solver sudoku={fromString(samples[3])}/> : <Solver sudoku={current}/>}
                         </Route>
-                        <Route path="/solver">
-                            <Solver/>
-                        </Route>
-                        <Route path="/">
-                            <Scanner/>
+                        <Route path={"/"}>
+                            <Scanner solveSudoku={solveSudoku}/>
                         </Route>
                     </Switch>
                 </div>
-            </Router>
         </>
     );
 }
