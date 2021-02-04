@@ -1,12 +1,29 @@
 class CV {
     private worker: Worker | undefined;
     private _status: Map<string, [string, MessageEvent | ErrorEvent | undefined]>;
+    private loaded: boolean = false;
 
 
     constructor() {
         this._status = new Map();
         this.worker = new Worker('/js/worker.js') // load worker
-
+        // Capture events and save [status, event] inside the _status object
+        this.worker.onmessage = (e) => {
+            console.debug("Worker got a message", e)
+            if (e.data.error) {
+                (this._status.set(e.data.msg, ['error', e]));
+            } else {
+                if (e.data.msg === 'load') {
+                    this.loaded = true;
+                }
+                (this._status.set(e.data.msg, ['done', e]));
+            }
+            console.debug(e);
+        }
+        this.worker.onerror = (e) => {
+            (this._status.set(e.message, ['error', e]));
+            console.debug(e);
+        }
     }
 
     /**
@@ -16,7 +33,7 @@ class CV {
      */
     _dispatch(event: { msg: string, data?: any }) {
         const {msg} = event
-        if(this._status.get(msg)){
+        if (this._status.get(msg)) {
             // we already posted this message and worker is busy right now, what do we do with it?
         }
         this._status.set(msg, ['loading', undefined])
@@ -40,30 +57,12 @@ class CV {
     }
 
     /**
-     * First, we will load the worker and capture the onmessage
-     * and onerror events to always know the status of the event
-     * we have triggered.
-     *
-     * Then, we are going to call the 'load' event, as we've just
-     * implemented it so that the worker can capture it.
+     * we are going to call the 'load' event, as we've just
      */
     load() {
-        if (this.worker) {
-            // Capture events and save [status, event] inside the _status object
-            this.worker.onmessage = (e) => {
-                if(e.data.error){
-                    (this._status.set(e.data.msg, ['error', e]));
-                }else{
-                    (this._status.set(e.data.msg, ['done', e]));
-                }
-                console.debug(e);
-            }
-            this.worker.onerror = (e) => {
-                (this._status.set(e.message, ['error', e]));
-                console.debug(e);
-            }
+        if (!this.loaded) {
+            return this._dispatch({msg: 'load'})
         }
-        return this._dispatch({msg: 'load'})
     }
 
     /**

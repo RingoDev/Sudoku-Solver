@@ -142,7 +142,7 @@ self.addEventListener('message', (e) => {
     switch (e.data.msg) {
         case 'load': {
             if (cvReady) {
-                postMessage({msg: e.data.msg})
+                postMessage({msg: 'load'})
                 return;
             }
             if (loading) return
