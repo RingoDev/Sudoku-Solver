@@ -1,7 +1,8 @@
 import {copy, digit, sudoku} from "./SudokuUtils";
 
-
-const sudokuValues = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+type position = [row: number, column: number]
+type triple = [number, number, number]
+// const sudokuValues = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 //https://www.sudokuwiki.org/Naked_Candidates#NP
 
@@ -9,166 +10,287 @@ const sudokuValues = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 export default function nakedTriples(input: sudoku): [boolean, sudoku] {
     const sudoku = copy(input);
     let changed = false;
-    for (let i = 0; i < sudoku.length; i++) {
-        for (let j = 0; j < sudoku[i].length; j++) {
-            const current = sudoku[i][j];
+
+
+    for (let rowIndex = 0; rowIndex < sudoku.length; rowIndex++) {
+        for (let colIndex = 0; colIndex < sudoku[rowIndex].length; colIndex++) {
+            const current = sudoku[rowIndex][colIndex];
             if (typeof current === "number") continue;
-            // we only detect the 3 possible fields and from that detect the others
-            if (current.length !== 3) continue;
+            // console.debug("LOOKING AT FIELD " + [rowIndex, colIndex])
 
-
-            const values: [digit, digit, digit] = [current[0], current[1], current[2]];
+            // only look into fields with length 2 or 3
+            if (current.length > 3) continue;
 
             // coordinates of first and second occurrence and the values of our triple
-            let found: [{ row: number, col: number }, { row: number, col: number }] | undefined;
-            found = nakedTripleColumn(sudoku, j, i, values)
+            let found: [position, position, triple] | undefined;
+
+            found = nakedTripleRow(sudoku, [rowIndex, colIndex])
             if (found !== undefined) {
-                // we have a naked pair in this column, we can erase its occurrences in all other possibility-arrays in this column
+                const [[, col1], [, col2], triple] = found;
+
+
+                console.debug("Found a naked Triple in Row", [rowIndex, colIndex], "column of first: " + col1, "column of second: " + col2, " With values: " + triple)
+                // we have a naked triple in this row, we can erase its occurrences in all other possibility-arrays in this row
                 for (let x = 0; x < sudoku.length; x++) {
-                    if (i === x || found[0].row === x || found[1].row === x) continue; // leave the found triples and ourself out
-                    const value = sudoku[x][j];
+                    if (colIndex === x || col1 === x || col2 === x) continue; // leave the found triples and ourself out
+                    const value = sudoku[rowIndex][x];
                     if (typeof value === "number") continue; // we don't need solved cells
-                    sudoku[x][j] = value.filter((v) => !values.includes(v))
+                    const [newPossibles, includedVal] = filter(value, triple)
+                    if (includedVal) {
+                        changed = true;
+                        sudoku[rowIndex][x] = newPossibles;
+                    }
                 }
-                changed = true;
-                break; // not sure if we can break here or not
-                // todo more testing
             }
 
-            found = nakedTripleRow(sudoku, j, i, values)
+            found = nakedTripleColumn(sudoku, [rowIndex, colIndex])
             if (found !== undefined) {
-                // we have a naked pair in this row, we can erase its occurrences in all other possibility-arrays in this row
+                const [[row1,], [row2,], triple] = found;
+
+                console.debug("Found a naked Triple in Column", [rowIndex, colIndex], [row1,], [row2,], " With values: " + triple)
+
+                // we have a naked triple in this column, we can erase its occurrences in all other possibility-arrays in this column
                 for (let x = 0; x < sudoku.length; x++) {
-                    if (j === x || found[0].col === x || found[1].col === x) continue; // leave the found triples and ourself out
-                    const value = sudoku[i][x];
+                    if (rowIndex === x || row1 === x || row2 === x) continue; // leave the found triples and ourself out
+                    const value = sudoku[x][colIndex];
                     if (typeof value === "number") continue; // we don't need solved cells
-                    sudoku[i][x] = value.filter((v) => !values.includes(v))
+                    const [newPossibles, includedVal] = filter(value, triple)
+                    if (includedVal) {
+                        changed = true;
+                        sudoku[x][colIndex] = newPossibles;
+                    }
                 }
-                changed = true;
-                break; // not sure if we can break here or not
-                // todo more testing
             }
 
-            found = nakedTriple3x3(sudoku, j, i, values)
+            found = nakedTriple3x3(sudoku, [rowIndex, colIndex])
             if (found !== undefined) {
-                // we have a naked pair in this 3x3, we can erase its occurrences in all other possibility-arrays in this 3x3
 
-                const boxRow = Math.floor(j / 3) * 3;
-                const boxCol = Math.floor(i / 3) * 3;
+                const [[row1, col1], [row2, col2], triple] = found;
+
+                console.debug("Found a naked Triple in 3x3", [rowIndex, colIndex], [row1, col1], [row2, col2], " With values: " + triple)
+                // we have a naked triple in this 3x3, we can erase its occurrences in all other possibility-arrays in this 3x3
+
+                const boxRow = Math.floor(rowIndex / 3) * 3;
+                const boxCol = Math.floor(colIndex / 3) * 3;
 
                 for (let r = 0; r < 3; r++) {
                     for (let c = 0; c < 3; c++) {
-                        if ((i === boxRow + r && j === boxCol + c) ||
-                            (found[0].row === boxRow + r && found[0].col === boxCol + c) ||
-                            (found[1].row === boxRow + r && found[1].col === boxCol + c)) continue; // leave the found triples and ourself out
+                        if ((rowIndex === boxRow + r && colIndex === boxCol + c) ||
+                            (row1 === boxRow + r && col1 === boxCol + c) ||
+                            (row2 === boxRow + r && col2 === boxCol + c)) continue; // leave the found triples and ourself out
                         const value = sudoku[boxRow + r][boxCol + c]
                         if (typeof value === "number") continue;
-                        sudoku[boxRow + r][boxCol + c] = value.filter((v) => !values.includes(v))
+                        const [newPossibles, includedVal] = filter(value, triple)
+                        if (includedVal) {
+                            changed = true;
+                            sudoku[boxRow + r][boxCol + c] = newPossibles;
+                        }
                     }
                 }
-                changed = true;
-                break; // not sure if we can break here or not
-                // todo more testing
             }
         }
     }
     return [changed, sudoku]
 }
 
-// returns the position of the naked pair counterpart in the column if found
-function nakedTripleColumn(sudoku: sudoku, row: number, column: number, values: [number, number, number]): [{ row: number, col: number }, { row: number, col: number }] | undefined {
+/**
+ * finds the 2 positions of the 2 corresponding parts of the naked triple
+ * @param sudoku
+ * @param pos the current position in the sudoku
+ * @return the 2 positions of the counterparts of the naked triple and the 3 values of the triple or undefined if none was found
+ */
+function nakedTripleRow(sudoku: sudoku, pos: position): [position, position, [number, number, number]] | undefined {
 
-    let second: { row: number, col: number } | undefined;
+    for (let j = 0; j < sudoku.length - 1; j++) {
+        let second = findNextInRow(sudoku, pos, j);
+        if (second === undefined) continue;
 
-    for (let i = 0; i < sudoku.length; i++) {
+        for (let x = second[1] + 1; x < sudoku.length;) {
+
+            // search for third from Col of last found field
+            const third = findNextInRow(sudoku, pos, x)
+
+            // found no third candidate so we can return
+            if (third === undefined) return;
+
+            const values = getValues(sudoku, pos, second, third)
+            if (values.length === 3) {
+                return [second, third, values as [number, number, number]]
+            }
+
+            // the three field have more then 3 distinct values so look for a next third field
+            x = third[1] + 1;
+        }
+    }
+}
+
+/**
+ * finds the next field with 2 or 3 values
+ * @param sudoku
+ * @param pos the current position in the sudoku
+ * @param fromCol the columnIndex from where to look for the second field
+ */
+function findNextInRow(sudoku: sudoku, pos: position, fromCol: number): position | undefined {
+    const [row, column] = pos;
+
+    for (let j = fromCol; j < sudoku.length; j++) {
+        if (j === column) continue; // dont check pair against itself
+        const current = sudoku[row][j]
+        if (typeof current === "number") continue;
+        if (current.length > 3) continue;
+        // we only get here if the field is not the same coordinates and has 2 or 3 values
+        return [row, j]
+    }
+}
+
+/**
+ * finds the 2 positions of the 2 corresponding parts of the naked triple in this column
+ * @param sudoku
+ * @param pos the current position in the sudoku
+ * @return the 2 positions of the counterparts of the naked triple and the 3 values of the triple or undefined if none was found
+ */
+function nakedTripleColumn(sudoku: sudoku, pos: position): [position, position, [number, number, number]] | undefined {
+    for (let i = 0; i < sudoku.length - 1; i++) {
+
+        let second = findNextInColumn(sudoku, pos, i);
+        if (second === undefined) continue;
+
+        for (let x = second[0] + 1; x < sudoku.length;) {
+
+            // search for third from lsat found field
+            const third = findNextInColumn(sudoku, pos, x)
+
+            // found no third candidate so we can return
+            if (third === undefined) return;
+
+            const values = getValues(sudoku, pos, second, third)
+
+            if (values.length === 3) {
+                return [second, third, values as [number, number, number]]
+            }
+            // the three field have more then 3 distinct values so look for a next third field
+            x = third[0] + 1;
+        }
+    }
+}
+
+/**
+ * finds the next field with 2 or 3 values
+ * @param sudoku
+ * @param pos the current position in the sudoku
+ * @param fromRow the rowIndex from where to look for the second field
+ */
+function findNextInColumn(sudoku: sudoku, pos: position, fromRow: number): position | undefined {
+    const [row, column] = pos;
+    for (let i = fromRow; i < sudoku.length; i++) {
         if (i === row) continue; // dont check pair against itself
         const current = sudoku[i][column]
         if (typeof current === "number") continue;
         if (current.length > 3) continue;
+        // we only get here if the field is not the same coordinates and has 2 or 3 values
+        return [i, column]
+    }
+}
 
-        // the field must include 2 of the 3 numbers and only the 3 numbers.
-        // the best way to check is to check if it does not contain the complementary numbers
-        const badValues = sudokuValues.filter(v => !values.includes(v));
-        let correct = true;
-        for (let n of current) {
-            if (badValues.includes(n)) {
-                correct = false;
-                break;
-            }
-        }
-        if (correct) {
-            if (second === undefined) {
-                second = {row: i, col: column}
-            } else {// we found the third triple there can't be another one due to sudoku restraints so lets return
-                return [second, {row: i, col: column}]
+
+function nakedTriple3x3(sudoku: sudoku, pos: position): [position, position, [number, number, number]] | undefined {
+
+    for (let r = 0; r < 3; r++) {
+        for (let c = 0; c < 3; c++) {
+            let second = findNextIn3x3(sudoku, pos, [r, c]);
+            if (second === undefined) continue;
+            // console.debug("Found second to " + pos + " " + second)
+
+            const [secBoxRow, secBoxCol] = second[1]
+
+            for (let r = secBoxRow; r < 3; r++) {
+                for (let c = 0; c < 3;) {
+                    if (secBoxRow === r && secBoxCol >= c) {
+                        c++;
+                        continue
+                    }
+
+                    let third = findNextIn3x3(sudoku, pos, [r, c])
+
+                    // found no third candidate so we can return
+                    if (third === undefined) return;
+
+                    // console.debug("Found third to " + pos + " " + second + "  " + third)
+
+                    const values = getValues(sudoku, pos, second[0], third[0])
+                    if (values.length === 3) {
+                        return [second[0], third[0], values as [number, number, number]]
+                    }
+
+                    // the three field have more then 3 distinct values so look for a next third field
+                    r = third[1][0]
+                    c = third[1][1] + 1
+
+                }
             }
         }
     }
 }
 
-// returns the position of the naked pair counterpart in the row if found
-function nakedTripleRow(sudoku: sudoku, row: number, column: number, values: [number, number, number]): [{ row: number, col: number }, { row: number, col: number }] | undefined {
-
-    let second: { row: number, col: number } | undefined;
-
-    for (let i = 0; i < sudoku.length; i++) {
-        if (i === column) continue; // dont check pair against itself
-        const current = sudoku[row][i]
-        if (typeof current === "number") continue;
-        if (current.length > 3) continue;
-
-        // the field must include 2 of the 3 numbers and only the 3 numbers.
-        // the best way to check is to check if it does not contain the complementary numbers
-        const badValues = sudokuValues.filter(v => !values.includes(v));
-        let correct = true;
-        for (let n of current) {
-            if (badValues.includes(n)) {
-                correct = false;
-                break;
-            }
-        }
-        if (correct) {
-            if (second === undefined) {
-                second = {row: row, col: i}
-            } else {// we found the third triple there can't be another one due to sudoku restraints so lets return
-                return [second, {row: row, col: i}]
-            }
-        }
-    }
-}
-
-
-function nakedTriple3x3(sudoku: sudoku, row: number, column: number, values: [number, number, number]): [{ row: number, col: number }, { row: number, col: number }] | undefined {
-
-    let second: { row: number, col: number } | undefined;
+/**
+ * finds the next field with 2 or 3 values
+ * @param sudoku
+ * @param pos the current position in the sudoku
+ * @param fromPos the row and col in the 3x3 to check from for the next field
+ * @return the global coordinates of the next field and the box coordinates of the next field
+ */
+function findNextIn3x3(sudoku: sudoku, pos: position, fromPos: position): [position, position] | undefined {
+    const [row, column] = pos;
 
     const boxRow = Math.floor(row / 3) * 3;
     const boxCol = Math.floor(column / 3) * 3;
 
-    for (let r = 0; r < 3; r++) {
-        for (let c = 0; c < 3; c++) {
-            if (boxCol === column && boxRow === row) continue; // dont check pair against itself
-            const current = sudoku[boxRow + r][boxCol + c]
-            if (typeof current === "number") continue; // not interested in solved cells
-            if (current.length > 3) continue;
+    // console.debug("Looking for next field in 3x3 from BoxLocation " + fromPos)
 
-            // the field must include 2 of the 3 numbers and only the 3 numbers.
-            // the best way to check is to check if it does not contain the complementary numbers
-            const badValues = sudokuValues.filter(v => !values.includes(v));
-            let correct = true;
-            for (let n of current) {
-                if (badValues.includes(n)) {
-                    correct = false;
-                    break;
-                }
-            }
-            if (correct) {
-                if (second === undefined) {
-                    second = {row: boxRow + r, col: boxCol + c}
-                } else {// we found the third triple there can't be another one due to sudoku restraints so lets return
-                    return [second, {row: boxRow + r, col: boxCol + c}]
-                }
-            }
+    for (let r = fromPos[0]; r < 3; r++) {
+        for (let c = 0; c < 3; c++) {
+            if (fromPos[0] === r && fromPos[1] > c) continue
+
+            if (boxRow + r === row && boxCol + c === column) continue; // dont check against current
+
+            const current = sudoku[boxRow + r][boxCol + c]
+            if (typeof current === "number") continue;
+            if (current.length > 3) continue;
+            // we only get here if the field is not the same coordinates and has 2 or 3 values
+            return [[boxRow + r, boxCol + c], [r, c]]
         }
     }
+}
+
+function getValues(sudoku: sudoku, pos1: position, pos2: position, pos3: position) {
+    // check if the 3 found fields combined contain exactly 3 different values
+    const values1 = sudoku[pos1[0]][pos1[1]]
+    const values2 = sudoku[pos2[0]][pos2[1]]
+    const values3 = sudoku[pos3[0]][pos3[1]]
+
+    if (typeof values1 === "number" || typeof values2 === "number" || typeof values3 === "number") return [] // should never happen, is just due to type safety
+
+    return Array.from(new Set([...values1, ...values2, ...values3]))
+}
+
+/**
+ * Removes certain values from an array and also returns true if something was changed
+ * @param array the array to filter
+ * @param values the values to keep
+ */
+function filter(array: digit[], values: number[]): [digit[], boolean] {
+    console.debug("Filtering array: " + array + " from numbers: " + values)
+
+    let result: digit[]
+    let changed = false;
+    result = array.filter((v) => {
+        if (values.includes(v)) {
+            changed = true;
+            return false;
+        }
+        return true;
+    })
+
+    // console.debug("Returning the filtered array: " + result + "and the result has " + (changed ? "" : "not ") + "changed")
+    return [result, changed]
 }

@@ -30,7 +30,7 @@ const Solver: React.FC<SolverProps> = (props) => {
         console.log("Taking a step forward")
 
         for (let algo of algorithms) {
-            console.debug("Trying next algorithm",algo.name)
+            console.debug("Trying next algorithm", algo.name)
             let [changed, sudoku] = algo(current);
             if (changed) {// step is complete
                 setCurrent(sudoku);
@@ -56,10 +56,13 @@ const Solver: React.FC<SolverProps> = (props) => {
             }} selected={[-1, -1]} setNumber={() => {
             }}/>
             <div className={"controls"}>
-                <Button className={"control-btn"} onClick={goStart}><i className="fas fa-arrow-left"/></Button>
-                <Button className={"control-btn"}><i className="fas fa-arrow-left"/></Button>
-                <Button className={"control-btn"} onClick={stepForward}><i className="fas fa-arrow-right"/></Button>
-                <Button className={"control-btn"} onClick={goEnd}><i className="fas fa-arrow-right"/></Button>
+                <Button className={"control-btn"} aria-label={"to the start"} onClick={goStart}><i
+                    className="fas fa-arrow-left"/></Button>
+                <Button className={"control-btn"} aria-label={"step back"}><i className="fas fa-arrow-left"/></Button>
+                <Button className={"control-btn"} aria-label={"step forward"} onClick={stepForward}><i
+                    className="fas fa-arrow-right"/></Button>
+                <Button className={"control-btn"} aria-label={"solve completely"} onClick={goEnd}><i
+                    className="fas fa-arrow-right"/></Button>
             </div>
         </>
     )

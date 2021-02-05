@@ -26,16 +26,19 @@ export default function nakedPairs(input: sudoku): [boolean, sudoku] {
                         sudoku[rowIndex][x] = newPossibles;
                     }
                 }
-                break; // not sure if we can break here or not
-                // todo more testing
+                // break; // not sure if we can break here or not
+                // // todo more testing
             }
 
             found = nakedPairColumn(sudoku, rowIndex, colIndex, pair)
             if (found !== undefined) {
+
+                const [row,] = found;
+
                 console.debug("Found a naked Pair in column ", [rowIndex, colIndex], found, " With values: " + pair)
                 // we have a naked pair in this column, we can erase its occurrences in all other possibility-arrays in this column except counterpart
                 for (let x = 0; x < sudoku.length; x++) {
-                    if (found[0] === x || rowIndex === x) continue; // leave our counterpart and ourself out
+                    if (row === x || rowIndex === x) continue; // leave our counterpart and ourself out
                     const value = sudoku[x][colIndex];
                     if (typeof value === "number") continue;
                     const [newPossibles, includedVal] = filter(value, pair)
@@ -44,17 +47,17 @@ export default function nakedPairs(input: sudoku): [boolean, sudoku] {
                         sudoku[x][colIndex]  = newPossibles;
                     }
                 }
-                break; // not sure if we can break here or not
-                // todo more testing
+                // break; // not sure if we can break here or not
+                // // todo more testing
             }
 
             found = nakedPair3x3(sudoku, rowIndex, colIndex, pair)
             if (found !== undefined) {
                 // we have a naked pair in this 3x3, we can erase its occurrences in all other possibility-arrays in this 3x3
-                console.debug("Found a naked Pair in Field ", [rowIndex, colIndex], found, " With values: " + pair)
+                console.debug("Found a naked Pair in 3x3 ", [rowIndex, colIndex], found, " With values: " + pair)
 
-                const boxRow = Math.floor(colIndex / 3) * 3;
-                const boxCol = Math.floor(rowIndex / 3) * 3;
+                const boxRow = Math.floor(rowIndex / 3) * 3;
+                const boxCol = Math.floor(colIndex / 3) * 3;
 
                 for (let r = 0; r < 3; r++) {
                     for (let c = 0; c < 3; c++) {
@@ -68,8 +71,8 @@ export default function nakedPairs(input: sudoku): [boolean, sudoku] {
                         }
                     }
                 }
-                break; // not sure if we can break here or not
-                // todo more testing
+                // break; // not sure if we can break here or not
+                // // todo more testing
             }
         }
     }
@@ -77,15 +80,17 @@ export default function nakedPairs(input: sudoku): [boolean, sudoku] {
 }
 
 /**
- * @param value the array to filter
- * @param pair the pair to remove from the array
  *
+ * @param array
+ * @param values
  */
-function filter(value: digit[], pair: [digit, digit]): [digit[], boolean] {
-    let result: digit[] = []
+function filter(array: digit[], values: [digit, digit]): [digit[], boolean] {
+    console.debug("Filtering array: " + array + " from numbers: " + values)
+
+    let result: digit[]
     let changed = false;
-    result = value.filter((v) => {
-        if (pair.includes(v)) {
+    result = array.filter((v) => {
+        if (values.includes(v)) {
             changed = true;
             return false;
         }
