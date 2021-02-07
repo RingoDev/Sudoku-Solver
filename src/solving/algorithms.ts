@@ -3,6 +3,8 @@ import nakedPairs from "./nakedPairs";
 import hiddenSingles from "./hiddenSingles";
 import {reducePossibles} from "./reducePossibles";
 import nakedTriples from "./nakedTriples";
+import hiddenPairs from "./hiddenPairs";
+import hiddenTriples from "./hiddenTriples";
 
 // finds single fields with 1 possible value and reformats
 export const checkSolved = (input: sudoku): [boolean, sudoku] => {
@@ -20,14 +22,15 @@ export const checkSolved = (input: sudoku): [boolean, sudoku] => {
     return [changed, sudoku]
 }
 
-export const hiddenPairs = (input: sudoku): [boolean, sudoku] => {
-    const sudoku = copy(input);
-    let changed = false;
 
-    // todo implement
-
-    return [changed, sudoku]
-}
-
-const algorithms: ((sudoku: sudoku) => [boolean, sudoku])[] = [convert, checkSolved, reducePossibles, hiddenSingles, nakedPairs, nakedTriples, hiddenPairs]
+const algorithms: ((sudoku: sudoku) => [boolean, sudoku])[] = [
+    convert,
+    checkSolved,
+    reducePossibles,
+    hiddenSingles,
+    nakedPairs,
+    nakedTriples,
+    hiddenPairs,
+    hiddenTriples
+]
 export default algorithms;

@@ -26,8 +26,6 @@ export default function nakedPairs(input: sudoku): [boolean, sudoku] {
                         sudoku[rowIndex][x] = newPossibles;
                     }
                 }
-                // break; // not sure if we can break here or not
-                // // todo more testing
             }
 
             found = nakedPairColumn(sudoku, rowIndex, colIndex, pair)
@@ -47,8 +45,6 @@ export default function nakedPairs(input: sudoku): [boolean, sudoku] {
                         sudoku[x][colIndex]  = newPossibles;
                     }
                 }
-                // break; // not sure if we can break here or not
-                // // todo more testing
             }
 
             found = nakedPair3x3(sudoku, rowIndex, colIndex, pair)
@@ -65,14 +61,12 @@ export default function nakedPairs(input: sudoku): [boolean, sudoku] {
                         const value = sudoku[boxRow + r][boxCol + c]
                         if (typeof value === "number") continue;
                         const [newPossibles, includedVal] = filter(value, pair)
-                        if(includedVal){
+                        if (includedVal) {
                             changed = true;
                             sudoku[boxRow + r][boxCol + c] = newPossibles;
                         }
                     }
                 }
-                // break; // not sure if we can break here or not
-                // // todo more testing
             }
         }
     }
