@@ -1,9 +1,9 @@
 import React from "react";
-import { SudokuType } from "../../lib/SudokuUtils";
+import { SudokuGridType } from "../../lib/SudokuUtils";
 import Picture from "./Picture";
 
 interface ScannerProps {
-  solveSudoku: (val: SudokuType) => void;
+  solveSudoku: (val: SudokuGridType) => void;
 }
 
 const Scanner: React.FC<ScannerProps> = (props) => {

@@ -1,12 +1,12 @@
 import React, { useRef, useState } from "react";
 import cv from "../services/cv";
-import { digit, getEmpty, SudokuType } from "../../lib/SudokuUtils";
+import { digit, getEmpty, SudokuGridType } from "../../lib/SudokuUtils";
 
 const height = 800;
 const width = 800;
 
 interface PictureProps {
-  solveSudoku: (val: SudokuType) => void;
+  solveSudoku: (val: SudokuGridType) => void;
 }
 
 const Picture: React.FC<PictureProps> = (props) => {
@@ -19,7 +19,7 @@ const Picture: React.FC<PictureProps> = (props) => {
   const displayCanvasRef = useRef<HTMLCanvasElement>(null);
   // const [outputURL, setOutputURL] = useState<string>();
   const imgElement = useRef<HTMLImageElement>(null);
-  const [predictions, setPredictions] = useState<SudokuType>(getEmpty());
+  const [predictions, setPredictions] = useState<SudokuGridType>(getEmpty());
 
   // const [isOpen, setIsOpen] = useState<boolean>(false);
 

@@ -2,13 +2,13 @@ import React, { useEffect, useRef, useState } from "react";
 import cv from "../services/cv";
 import CameraSelector from "./CameraSelector";
 import SudokuGrid from "../components/SudokuGrid";
-import { digit, getEmpty, SudokuType } from "../../lib/SudokuUtils";
+import { digit, getEmpty, SudokuGridType } from "../../lib/SudokuUtils";
 
 const height = 800;
 const width = 800;
 
 interface VideoProps {
-  solveSudoku: (val: SudokuType) => void;
+  solveSudoku: (val: SudokuGridType) => void;
 }
 
 const Video: React.FC<VideoProps> = (props) => {
@@ -27,7 +27,7 @@ const Video: React.FC<VideoProps> = (props) => {
   const [videoStream, setVideoStream] = useState<MediaStream | undefined>(
     undefined
   );
-  const [predictions, setPredictions] = useState<SudokuType>(getEmpty());
+  const [predictions, setPredictions] = useState<SudokuGridType>(getEmpty());
 
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
 
@@ -218,14 +218,14 @@ const Video: React.FC<VideoProps> = (props) => {
           width={width}
           height={height}
         />
-        <SudokuGrid
-          selected={selectedIndex}
-          setNumber={(n: digit) => changeNumber(n)}
-          sudoku={predictions}
-          setSelected={(index) => {
-            // setSelectedNum([i, j])
-          }}
-        />
+        {/*<SudokuGrid*/}
+        {/*  selected={selectedIndex}*/}
+        {/*  setNumber={(n: digit) => changeNumber(n)}*/}
+        {/*  sudoku={predictions}*/}
+        {/*  setSelected={(index) => {*/}
+        {/*    // setSelectedNum([i, j])*/}
+        {/*  }}*/}
+        {/*/>*/}
         {/*{*/}
         {/*    outputURL ? (<img style={{maxWidth: '1080px', width: '100%'}} alt={'The undistorted snapshot'}*/}
         {/*                      src={outputURL}/>) : <></>*/}
