@@ -29,11 +29,17 @@ const SudokuGrid: React.FC<SudokuGridProps> = ({
         "mx-auto aspect-square p-4 sm:p-8 md:max-h-[90vh] md:w-[1024px] md:max-w-[90vh] md:p-16 "
       }
     >
-      <div className={"grid aspect-square grid-cols-3 gap-1 outline outline-4"}>
+      <div
+        className={
+          "grid aspect-square grid-cols-3 gap-1 outline outline-4 outline-slate-500"
+        }
+      >
         {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((index) => (
           <div
             key={index}
-            className={"grid w-full grid-cols-3 gap-1 outline outline-1"}
+            className={
+              "grid w-full grid-cols-3 gap-1 outline outline-1 outline-slate-500"
+            }
           >
             <MiddleGrid
               setNumber={setNumber}
