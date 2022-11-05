@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import styles from "./solver.module.css";
 import {
-  convert,
   digit,
-  setValueAtIndex,
-  SudokuType,
+  gridToList,
+  listToGrid,
+  SudokuListType,
 } from "../../lib/SudokuUtils";
 import SudokuGrid from "../components/SudokuGrid";
 import algorithms from "../../lib/algorithms/algorithms";
@@ -15,19 +15,20 @@ import {
   ChevronsLeft,
 } from "lucide-react";
 import { bruteForce } from "../../lib/algorithms/bruteForce";
+import { SudokuContextProvider } from "../sudoku-context";
 
 interface SolverProps {
-  sudoku: SudokuType;
+  sudoku: SudokuListType;
 }
 
 const Solver: React.FC<SolverProps> = (props) => {
-  const [solved, setSolved] = useState<SudokuType>();
-  const [current, setCurrent] = useState<SudokuType>(props.sudoku);
+  const [solved, setSolved] = useState<SudokuListType>();
+  const [displayed, setDisplayed] = useState<SudokuListType>(props.sudoku);
   const [selected, setSelected] = useState<number>(-1);
 
   useEffect(() => {
     if (solved === undefined) {
-      setSolved(bruteForce(convert(props.sudoku)[1]));
+      setSolved(gridToList(bruteForce(listToGrid(props.sudoku))));
     }
   }, [setSolved, props.sudoku, solved]);
 
@@ -41,10 +42,10 @@ const Solver: React.FC<SolverProps> = (props) => {
 
     for (let algo of algorithms) {
       console.log("Trying next algorithm", algo.name);
-      let [changed, sudoku] = algo(current);
+      let [changed, sudoku] = algo(listToGrid(displayed));
       if (changed) {
         // step is complete
-        setCurrent(sudoku);
+        setDisplayed(gridToList(sudoku));
         return;
       }
     }
@@ -53,25 +54,28 @@ const Solver: React.FC<SolverProps> = (props) => {
   };
   const goStart = () => {
     console.debug("Going to start");
-    setCurrent(props.sudoku);
+    setDisplayed(props.sudoku);
   };
   const goEnd = () => {
-    setCurrent(solved);
+    setDisplayed(solved);
   };
 
   const setNumberAtIndex = (value: digit, index: number) => {
     console.info("setting value at index " + index + " to value " + value);
-    setCurrent(setValueAtIndex(value, index, current));
+    setDisplayed(displayed.map((v, i) => (i === index ? [value] : v)));
   };
 
   return (
     <>
-      <SudokuGrid
-        sudoku={current}
-        setSelected={setSelected}
-        selected={selected}
-        setNumber={setNumberAtIndex}
-      />
+      <SudokuContextProvider value={displayed}>
+        <SudokuGrid
+          sudoku={displayed}
+          setSelected={setSelected}
+          selected={selected}
+          setNumber={setNumberAtIndex}
+        />
+      </SudokuContextProvider>
+
       <div className={styles.controls}>
         <button aria-label={"to the start"} onClick={goStart}>
           <ChevronsLeft />

@@ -1,8 +1,10 @@
-import { copy, digit, SudokuType } from "../SudokuUtils";
+import { copyGrid, digit, SudokuGridType } from "../SudokuUtils";
 
 //https://www.sudokuwiki.org/Naked_Candidates#NP
-export default function nakedPairs(input: SudokuType): [boolean, SudokuType] {
-  const sudoku = copy(input);
+export default function nakedPairs(
+  input: SudokuGridType
+): [boolean, SudokuGridType] {
+  const sudoku = copyGrid(input);
   let changed = false;
   for (let rowIndex = 0; rowIndex < sudoku.length; rowIndex++) {
     for (let colIndex = 0; colIndex < sudoku[rowIndex].length; colIndex++) {
@@ -113,7 +115,7 @@ function filter(array: digit[], values: [digit, digit]): [digit[], boolean] {
 
 // returns the position of the naked pair counterpart in the column if found
 function nakedPairColumn(
-  sudoku: SudokuType,
+  sudoku: SudokuGridType,
   row: number,
   column: number,
   pair: [digit, digit]
@@ -130,7 +132,7 @@ function nakedPairColumn(
 
 // returns the position of the naked pair counterpart in the row if found
 function nakedPairRow(
-  sudoku: SudokuType,
+  sudoku: SudokuGridType,
   row: number,
   column: number,
   pair: [digit, digit]
@@ -151,7 +153,7 @@ function nakedPairRow(
  * @param pair the value of the input pair to check
  */
 function nakedPair3x3(
-  sudoku: SudokuType,
+  sudoku: SudokuGridType,
   row: number,
   column: number,
   pair: [digit, digit]

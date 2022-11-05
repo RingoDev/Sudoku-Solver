@@ -7,33 +7,30 @@ interface SudokuSingleProps {
   setSelected: (index: number) => void;
   selected: number;
   index: number;
-  value: number | number[];
+  possibleValues: digit[];
   setNumber: (number: digit) => void;
 }
 
 const SingleTile: React.FC<SudokuSingleProps> = ({
   selected,
-  value,
+  possibleValues,
   index,
   setNumber,
 }) => {
   const handleChange = (event) => {
     const number = Number(event.target.value);
-    console.log("Test");
     if (!isNaN(number)) {
-      console.log("is number");
       setNumber((number % 10) as 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9);
     }
   };
 
   if (index === selected) {
-    const val = value;
     return (
       <input
         className={
-          "flex aspect-square max-w-[50%] cursor-pointer items-center justify-center text-center"
+          "flex aspect-square max-w-[75%] cursor-pointer items-center justify-center text-center"
         }
-        value={typeof val === "number" && val !== 0 ? val : ""}
+        value={possibleValues.length === 1 ? possibleValues[0] : ""}
         onChange={handleChange}
         type={"number"}
         autoFocus={true}
@@ -41,14 +38,10 @@ const SingleTile: React.FC<SudokuSingleProps> = ({
     );
   }
 
-  return (
-    <>
-      {typeof value === "number" ? (
-        <InnerField value={value} />
-      ) : (
-        <PossibleGrid values={value} />
-      )}
-    </>
+  return possibleValues.length === 1 ? (
+    <InnerField value={possibleValues[0]} />
+  ) : (
+    <PossibleGrid values={possibleValues} />
   );
 };
 

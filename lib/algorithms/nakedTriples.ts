@@ -1,4 +1,4 @@
-import { copy, digit, SudokuType } from "../SudokuUtils";
+import { copyGrid, digit, SudokuGridType } from "../SudokuUtils";
 
 type position = [row: number, column: number];
 type triple = [number, number, number];
@@ -7,8 +7,10 @@ type triple = [number, number, number];
 //https://www.sudokuwiki.org/Naked_Candidates#NP
 
 // doesnt find xy,yz,xz todo
-export default function nakedTriples(input: SudokuType): [boolean, SudokuType] {
-  const sudoku = copy(input);
+export default function nakedTriples(
+  input: SudokuGridType
+): [boolean, SudokuGridType] {
+  const sudoku = copyGrid(input);
   let changed = false;
 
   for (let rowIndex = 0; rowIndex < sudoku.length; rowIndex++) {
@@ -118,7 +120,7 @@ export default function nakedTriples(input: SudokuType): [boolean, SudokuType] {
  * @return the 2 positions of the counterparts of the naked triple and the 3 values of the triple or undefined if none was found
  */
 function nakedTripleRow(
-  sudoku: SudokuType,
+  sudoku: SudokuGridType,
   pos: position
 ): [position, position, [number, number, number]] | undefined {
   for (let j = 0; j < sudoku.length - 1; j++) {
@@ -150,7 +152,7 @@ function nakedTripleRow(
  * @param fromCol the columnIndex from where to look for the second field
  */
 function findNextInRow(
-  sudoku: SudokuType,
+  sudoku: SudokuGridType,
   pos: position,
   fromCol: number
 ): position | undefined {
@@ -173,7 +175,7 @@ function findNextInRow(
  * @return the 2 positions of the counterparts of the naked triple and the 3 values of the triple or undefined if none was found
  */
 function nakedTripleColumn(
-  sudoku: SudokuType,
+  sudoku: SudokuGridType,
   pos: position
 ): [position, position, [number, number, number]] | undefined {
   for (let i = 0; i < sudoku.length - 1; i++) {
@@ -205,7 +207,7 @@ function nakedTripleColumn(
  * @param fromRow the rowIndex from where to look for the second field
  */
 function findNextInColumn(
-  sudoku: SudokuType,
+  sudoku: SudokuGridType,
   pos: position,
   fromRow: number
 ): position | undefined {
@@ -221,7 +223,7 @@ function findNextInColumn(
 }
 
 function nakedTriple3x3(
-  sudoku: SudokuType,
+  sudoku: SudokuGridType,
   pos: position
 ): [position, position, [number, number, number]] | undefined {
   for (let r = 0; r < 3; r++) {
@@ -268,7 +270,7 @@ function nakedTriple3x3(
  * @return the global coordinates of the next field and the box coordinates of the next field
  */
 function findNextIn3x3(
-  sudoku: SudokuType,
+  sudoku: SudokuGridType,
   pos: position,
   fromPos: position
 ): [position, position] | undefined {
@@ -298,7 +300,7 @@ function findNextIn3x3(
 }
 
 function getValues(
-  sudoku: SudokuType,
+  sudoku: SudokuGridType,
   pos1: position,
   pos2: position,
   pos3: position

@@ -8,7 +8,7 @@ const PossibleGrid: React.FC<PossibleGridProps> = ({ values }) => {
   return (
     <div
       className={
-        "grid aspect-square w-full grid-cols-3 text-[0.5rem] md:text-lg"
+        "xl:text-md grid aspect-square w-full grid-cols-3 text-xs leading-3 sm:text-xs md:text-[0.75rem] lg:text-[0.8rem] 2xl:text-lg"
       }
     >
       {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((currentNumber, i) => (

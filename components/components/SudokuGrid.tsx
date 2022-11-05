@@ -1,9 +1,9 @@
 import React from "react";
-import { byNumbers, digit, SudokuType } from "../../lib/SudokuUtils";
-import SingleTile from "./single-tile";
+import { digit, SudokuListType } from "../../lib/SudokuUtils";
+import MiddleGrid from "./middle-grid";
 
 interface SudokuGridProps {
-  sudoku: SudokuType;
+  sudoku: SudokuListType;
   setSelected: (number) => void;
   selected: number;
   setNumber: (number: digit, index: number) => void;
@@ -15,31 +15,38 @@ const SudokuGrid: React.FC<SudokuGridProps> = ({
   selected,
   setNumber,
 }) => {
+  const getTransformedIndices = (middleGridIndex): any => {
+    return [0, 1, 2, 9, 10, 11, 18, 19, 20].map(
+      (v) =>
+        v +
+        3 * Math.floor(middleGridIndex % 3) +
+        27 * Math.floor(middleGridIndex / 3)
+    );
+  };
   return (
     <div
       className={
-        "mx-auto grid aspect-square grid-cols-9 p-4 sm:p-8 md:w-[1024px] md:p-16"
+        "mx-auto aspect-square p-4 sm:p-8 md:max-h-[90vh] md:w-[1024px] md:max-w-[90vh] md:p-16 "
       }
     >
-      {byNumbers(sudoku).map((value, i) => (
-        <div
-          onClick={() => {
-            setSelected(i);
-          }}
-          key={i}
-          className={
-            "flex aspect-square items-center justify-center outline outline-2 -outline-offset-1 outline-black md:text-5xl"
-          }
-        >
-          <SingleTile
-            value={value}
-            index={i}
-            setSelected={setSelected}
-            selected={selected}
-            setNumber={(value) => setNumber(value, i)}
-          />
-        </div>
-      ))}
+      <div className={"grid aspect-square grid-cols-3 gap-1 outline outline-4"}>
+        {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((index) => (
+          <div
+            key={index}
+            className={"grid w-full grid-cols-3 gap-1 outline outline-1"}
+          >
+            <MiddleGrid
+              setNumber={setNumber}
+              selected={selected}
+              setSelected={(innerIndex) => {
+                setSelected(getTransformedIndices(index)[innerIndex]);
+              }}
+              gridIndex={index}
+              values={getTransformedIndices(index).map((x) => sudoku[x])}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

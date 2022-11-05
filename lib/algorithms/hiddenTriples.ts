@@ -1,4 +1,4 @@
-import { copy, digit, SudokuType } from "../SudokuUtils";
+import { copyGrid, digit, SudokuGridType } from "../SudokuUtils";
 
 type position = [row: number, column: number];
 
@@ -6,9 +6,9 @@ type position = [row: number, column: number];
 
 // check for a combination of 2 numbers that only appear together and 2 times
 export default function hiddenTriples(
-  input: SudokuType
-): [boolean, SudokuType] {
-  const sudoku = copy(input);
+  input: SudokuGridType
+): [boolean, SudokuGridType] {
+  const sudoku = copyGrid(input);
   let changed = false;
   for (let rowIndex = 0; rowIndex < sudoku.length; rowIndex++) {
     for (let colIndex = 0; colIndex < sudoku[rowIndex].length; colIndex++) {
@@ -80,7 +80,7 @@ export default function hiddenTriples(
 }
 
 function removeNonTriple(
-  sudoku: SudokuType,
+  sudoku: SudokuGridType,
   field: digit[],
   triple: [number, number, number],
   pos: position
@@ -95,7 +95,7 @@ function removeNonTriple(
 }
 
 function reduceOverlapRow(
-  sudoku: SudokuType,
+  sudoku: SudokuGridType,
   pos: [row: number, column: number],
   j: number,
   k: number,
@@ -116,7 +116,7 @@ function reduceOverlapRow(
 }
 
 function reduceOverlapColumn(
-  sudoku: SudokuType,
+  sudoku: SudokuGridType,
   pos: [row: number, column: number],
   i: number,
   k: number,
@@ -143,7 +143,7 @@ function reduceOverlapColumn(
  * @return the position of the counterpart of the hidden pair and the values of the pair
  */
 function hiddenTripleRow(
-  sudoku: SudokuType,
+  sudoku: SudokuGridType,
   pos: position
 ): [position, position, [number, number, number]] | undefined {
   const [row, column] = pos;
@@ -214,7 +214,7 @@ function getOverlap(arrays: digit[][]): digit[] {
  * @return the position of the counterpart of the hidden pair and the values of the triple
  */
 function hiddenTripleColumn(
-  sudoku: SudokuType,
+  sudoku: SudokuGridType,
   pos: position
 ): [position, position, [number, number, number]] | undefined {
   const [row, column] = pos;
@@ -262,7 +262,7 @@ function hiddenTripleColumn(
  * @return the position of the counterpart of the hidden pair and the values of the pair
  */
 function hiddenTriple3x3(
-  sudoku: SudokuType,
+  sudoku: SudokuGridType,
   [row, column]: position
 ): [position, position, [number, number, number]] | undefined {
   const first = sudoku[row][column];
@@ -322,7 +322,7 @@ function hiddenTriple3x3(
 }
 
 function reduceOverlap3x3(
-  sudoku: SudokuType,
+  sudoku: SudokuGridType,
   [row, column]: position,
   [bRowSecond, bColSecond]: position,
   [bRowThird, bColThird]: position,
@@ -349,7 +349,7 @@ function reduceOverlap3x3(
 }
 
 function removeFromFields(
-  sudoku: SudokuType,
+  sudoku: SudokuGridType,
   first: position,
   second: position,
   third: position,

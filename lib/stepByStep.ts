@@ -1,13 +1,15 @@
-import { SudokuType } from "./SudokuUtils";
+import { SudokuGridType } from "./SudokuUtils";
 import algorithms from "./algorithms/algorithms";
 
 export class StepSolver {
   private history: [col: number, row: number, value: number][] = [];
-  private waysToSolve: ((sudoku: SudokuType) => [boolean, SudokuType])[] = [];
-  private states: SudokuType[] = [];
+  private waysToSolve: ((
+    sudoku: SudokuGridType
+  ) => [boolean, SudokuGridType])[] = [];
+  private states: SudokuGridType[] = [];
   private startState;
 
-  constructor(sudoku: SudokuType) {
+  constructor(sudoku: SudokuGridType) {
     this.startState = sudoku;
     this.waysToSolve = algorithms;
   }
@@ -17,7 +19,7 @@ export class StepSolver {
 
     let sudokuSolved = false;
     while (!sudokuSolved) {
-      let sudoku: SudokuType;
+      let sudoku: SudokuGridType;
       if (this.states.length === 0) sudoku = this.startState;
       else sudoku = this.states[this.states.length - 1];
       for (let i = 0; i < this.waysToSolve.length; i++) {

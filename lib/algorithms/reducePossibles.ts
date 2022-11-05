@@ -1,8 +1,10 @@
 // reduces the possible solutions for every field
-import { copy, digit, SudokuType } from "../SudokuUtils";
+import { copyGrid, digit, SudokuGridType } from "../SudokuUtils";
 
-export const reducePossibles = (input: SudokuType): [boolean, SudokuType] => {
-  const sudoku = copy(input);
+export const reducePossibles = (
+  input: SudokuGridType
+): [boolean, SudokuGridType] => {
+  const sudoku = copyGrid(input);
   let changed = false;
 
   for (let i = 0; i < sudoku.length; i++) {
@@ -27,7 +29,7 @@ export const reducePossibles = (input: SudokuType): [boolean, SudokuType] => {
   return [changed, sudoku];
 };
 
-function validateColumn(sudoku: SudokuType, column: number, value: digit) {
+function validateColumn(sudoku: SudokuGridType, column: number, value: digit) {
   for (let i = 0; i < sudoku.length; i++) {
     if (sudoku[i][column] === value) {
       return false;
@@ -37,7 +39,7 @@ function validateColumn(sudoku: SudokuType, column: number, value: digit) {
   return true;
 }
 
-function validateRow(sudoku: SudokuType, row: number, value: digit) {
+function validateRow(sudoku: SudokuGridType, row: number, value: digit) {
   for (let i = 0; i < sudoku[row].length; i++) {
     if (sudoku[row][i] === value) {
       return false;
@@ -48,7 +50,7 @@ function validateRow(sudoku: SudokuType, row: number, value: digit) {
 }
 
 function validateField(
-  sudoku: SudokuType,
+  sudoku: SudokuGridType,
   row: number,
   column: number,
   value: digit

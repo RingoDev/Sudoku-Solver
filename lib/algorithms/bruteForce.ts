@@ -1,8 +1,8 @@
-import { copy, digit, SudokuType } from "../SudokuUtils";
+import { copyGrid, digit, SudokuGridType } from "../SudokuUtils";
 
 // todo dont change input sudoku
-export function bruteForce(input: SudokuType) {
-  const sudoku = copy(input);
+export function bruteForce(input: SudokuGridType) {
+  const sudoku = copyGrid(input);
   const solution = solveRecursively(sudoku);
   console.debug("Found solution", solution);
   return solution;
@@ -10,7 +10,9 @@ export function bruteForce(input: SudokuType) {
 
 const digits: digit[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-export function getNextFree(sudoku: SudokuType): [row: number, col: number] {
+export function getNextFree(
+  sudoku: SudokuGridType
+): [row: number, col: number] {
   for (let row = 0; row < 9; row++) {
     for (let col = 0; col < 9; col++) {
       // we found the next free cell
@@ -22,7 +24,7 @@ export function getNextFree(sudoku: SudokuType): [row: number, col: number] {
   return [-1, -1];
 }
 
-export function solveRecursively(sudoku: SudokuType): SudokuType {
+export function solveRecursively(sudoku: SudokuGridType): SudokuGridType {
   const [row, col] = getNextFree(sudoku);
   // console.debug("Next free cell is [" + row + "," + col + "]")
   if (col === -1) return sudoku;
@@ -41,7 +43,7 @@ export function solveRecursively(sudoku: SudokuType): SudokuType {
 }
 
 function isValid(
-  sudoku: SudokuType,
+  sudoku: SudokuGridType,
   row: number,
   column: number,
   value: digit
@@ -132,7 +134,7 @@ function isValid(
 //     return result
 // }
 
-function validateColumn(sudoku: SudokuType, column: number, value: digit) {
+function validateColumn(sudoku: SudokuGridType, column: number, value: digit) {
   for (let i = 0; i < sudoku.length; i++) {
     if (sudoku[i][column] === value) {
       return false;
@@ -142,7 +144,7 @@ function validateColumn(sudoku: SudokuType, column: number, value: digit) {
   return true;
 }
 
-function validateRow(sudoku: SudokuType, row: number, value: digit) {
+function validateRow(sudoku: SudokuGridType, row: number, value: digit) {
   for (let i = 0; i < sudoku[row].length; i++) {
     if (sudoku[row][i] === value) {
       return false;
@@ -153,7 +155,7 @@ function validateRow(sudoku: SudokuType, row: number, value: digit) {
 }
 
 function validateField(
-  sudoku: SudokuType,
+  sudoku: SudokuGridType,
   row: number,
   column: number,
   value: digit

@@ -1,12 +1,14 @@
-import { copy, digit, SudokuType } from "../SudokuUtils";
+import { copyGrid, digit, SudokuGridType } from "../SudokuUtils";
 
 type position = [row: number, column: number];
 
 //https://www.sudokuwiki.org/Hidden_Candidates#HP
 
 // check for a combination of 2 numbers that only appear together and 2 times
-export default function hiddenPairs(input: SudokuType): [boolean, SudokuType] {
-  const sudoku = copy(input);
+export default function hiddenPairs(
+  input: SudokuGridType
+): [boolean, SudokuGridType] {
+  const sudoku = copyGrid(input);
   let changed = false;
   for (let rowIndex = 0; rowIndex < sudoku.length; rowIndex++) {
     for (let colIndex = 0; colIndex < sudoku[rowIndex].length; colIndex++) {
@@ -54,7 +56,7 @@ export default function hiddenPairs(input: SudokuType): [boolean, SudokuType] {
 }
 
 function removeNonPair(
-  sudoku: SudokuType,
+  sudoku: SudokuGridType,
   field: digit[],
   pair: [number, number],
   pos: [rowIndex: number, colIndex: number]
@@ -75,7 +77,7 @@ function removeNonPair(
  * @return the position of the counterpart of the hidden pair and the values of the pair
  */
 function hiddenPairRow(
-  sudoku: SudokuType,
+  sudoku: SudokuGridType,
   pos: position
 ): [position, [number, number]] | undefined {
   const [row, column] = pos;
@@ -127,7 +129,7 @@ function getOverlap(array1: digit[], array2: digit[]): digit[] {
  * @return the position of the counterpart of the hidden pair and the values of the pair
  */
 function hiddenPairColumn(
-  sudoku: SudokuType,
+  sudoku: SudokuGridType,
   pos: position
 ): [position, [number, number]] | undefined {
   const [row, column] = pos;
@@ -171,7 +173,7 @@ function hiddenPairColumn(
  * @return the position of the counterpart of the hidden pair and the values of the pair
  */
 function hiddenPair3x3(
-  sudoku: SudokuType,
+  sudoku: SudokuGridType,
   pos: position
 ): [position, [number, number]] | undefined {
   const [row, column] = pos;
@@ -219,7 +221,7 @@ function hiddenPair3x3(
 }
 
 function removeFromFields(
-  sudoku: SudokuType,
+  sudoku: SudokuGridType,
   found: [[row: number, column: number], [number, number]],
   pos: [rowIndex: number, colIndex: number]
 ) {

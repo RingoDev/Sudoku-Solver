@@ -1,10 +1,10 @@
 // checks if a field is the only possible solution in its row, col or field
-import { copy, digit, SudokuType } from "../SudokuUtils";
+import { copyGrid, digit, SudokuGridType } from "../SudokuUtils";
 
 export default function hiddenSingles(
-  input: SudokuType
-): [boolean, SudokuType] {
-  const sudoku = copy(input);
+  input: SudokuGridType
+): [boolean, SudokuGridType] {
+  const sudoku = copyGrid(input);
   let changed = false;
 
   for (let i = 0; i < sudoku.length; i++) {
@@ -29,7 +29,7 @@ export default function hiddenSingles(
 }
 
 // returns the amount of fields a possible number appears in a column
-function countInColumn(sudoku: SudokuType, column: number, value: digit) {
+function countInColumn(sudoku: SudokuGridType, column: number, value: digit) {
   let sum = 0;
   for (let i = 0; i < sudoku.length; i++) {
     const current = sudoku[i][column];
@@ -40,7 +40,7 @@ function countInColumn(sudoku: SudokuType, column: number, value: digit) {
 }
 
 // returns the amount of fields a possible number appears in a column
-function countInRow(sudoku: SudokuType, row: number, value: digit) {
+function countInRow(sudoku: SudokuGridType, row: number, value: digit) {
   let sum = 0;
   for (let i = 0; i < sudoku.length; i++) {
     const current = sudoku[row][i];
@@ -51,7 +51,7 @@ function countInRow(sudoku: SudokuType, row: number, value: digit) {
 }
 
 function countInField(
-  sudoku: SudokuType,
+  sudoku: SudokuGridType,
   row: number,
   column: number,
   value: digit
