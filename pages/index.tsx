@@ -1,16 +1,16 @@
-import React from "react";
+import React, { useContext } from "react";
 import Solver from "../src/components/solving/solver";
-import { fromString } from "../src/lib/utils/sudoku";
-import { samples } from "../src/lib/sampleSudokus";
 import Head from "next/head";
+import { SudokuContext } from "../src/contexts/sudoku-context";
 
 const App = () => {
+  const sudokuContext = useContext(SudokuContext);
   return (
     <>
       <Head>
         <title>Sudoku Solver | RingoDev</title>
       </Head>
-      <Solver sudoku={fromString(samples[2])} />
+      <Solver sudoku={sudokuContext.sudoku} />
     </>
   );
 };

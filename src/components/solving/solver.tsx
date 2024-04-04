@@ -15,7 +15,6 @@ import {
   ChevronsLeft,
 } from "lucide-react";
 import { bruteForce } from "../../lib/algorithms/bruteForce";
-import { SudokuContextProvider } from "../sudoku-context";
 
 interface SolverProps {
   sudoku: SudokuListType;
@@ -68,15 +67,12 @@ const Solver: React.FC<SolverProps> = (props) => {
 
   return (
     <>
-      <SudokuContextProvider value={displayed}>
-        <SudokuGrid
-          sudoku={displayed}
-          setSelected={setSelected}
-          selected={selected}
-          setNumber={setNumberAtIndex}
-        />
-      </SudokuContextProvider>
-
+      <SudokuGrid
+        sudoku={displayed}
+        setSelected={setSelected}
+        selected={selected}
+        setNumber={setNumberAtIndex}
+      />
       <div className={styles.controls}>
         <button aria-label={"to the start"} onClick={goStart}>
           <ChevronsLeft />

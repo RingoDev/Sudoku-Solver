@@ -1,15 +1,24 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import cv from "../../lib/services/cv";
-import { digit, getEmpty, SudokuGridType } from "../../lib/utils/sudoku";
+import {
+  digit,
+  fromPredictions,
+  getEmpty,
+  SudokuGridType,
+} from "../../lib/utils/sudoku";
+import { SudokuContext } from "../../contexts/sudoku-context";
+import Link from "next/link";
 
 const height = 800;
 const width = 800;
 
 interface PictureProps {
-  solveSudoku: (val: SudokuGridType) => void;
+  // solveSudoku: (val: SudokuGridType) => void;
 }
 
 const Picture: React.FC<PictureProps> = (props) => {
+  const sudokuContext = useContext(SudokuContext);
+
   const [processing, updateProcessing] = useState(false);
 
   // Canvas for converting input image to ImageData
@@ -53,6 +62,7 @@ const Picture: React.FC<PictureProps> = (props) => {
         // setOutputURL(ctx2.canvas.toDataURL());
         updateProcessing(false);
         setPredictions(result.data.predictions);
+        sudokuContext.setSudoku(fromPredictions(result.data.predictions));
       }
     }
   }
@@ -93,15 +103,14 @@ const Picture: React.FC<PictureProps> = (props) => {
             flexDirection: "row",
           }}
         >
-          {/*<Button color="primary" onClick={toggle} style={{margin: '1rem'}}>Toggle</Button>*/}
-          {/*<button*/}
-          {/*  color={"info"}*/}
-          {/*  disabled={processing}*/}
-          {/*  style={{ margin: "1rem" }}*/}
-          {/*  onClick={onClick}*/}
-          {/*>*/}
-          {/*  {processing ? "Processing..." : "Convert"}*/}
-          {/*</button>*/}
+          <button
+            color={"info"}
+            disabled={processing}
+            style={{ margin: "1rem" }}
+            onClick={onClick}
+          >
+            {processing ? "Processing..." : "Convert"}
+          </button>
         </div>
 
         <img
@@ -124,23 +133,6 @@ const Picture: React.FC<PictureProps> = (props) => {
           width={width}
           height={height}
         />
-
-        {/*<SudokuGrid selected={selectedNum} setNumber={(n: digit) => changeNumber(n)} sudoku={predictions}*/}
-        {/*            setSelected={(i, j) => {*/}
-        {/*                setSelectedNum([i, j])*/}
-        {/*            }}/>*/}
-        {/*{*/}
-        {/*    outputURL ? (<img style={{maxWidth: '1080px', width: '100%'}} alt={'The undistorted snapshot'}*/}
-        {/*                      src={outputURL}/>) : <></>*/}
-        {/*}*/}
-
-        {/*<button*/}
-        {/*  color={"info"}*/}
-        {/*  style={{ margin: "1rem" }}*/}
-        {/*  onClick={() => props.solveSudoku(predictions)}*/}
-        {/*>*/}
-        {/*  Solve*/}
-        {/*</button>*/}
       </div>
     </>
   );

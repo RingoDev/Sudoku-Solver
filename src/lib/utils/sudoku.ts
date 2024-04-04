@@ -98,6 +98,18 @@ export const fromString = (string: string): SudokuListType => {
   return result;
 };
 
+export const fromPredictions = (predictions: number[][]): SudokuListType => {
+  const result: SudokuListType = [];
+
+  for (let i of predictions) {
+    for (let j of i) {
+      result.push(j == 0 ? [1, 2, 3, 4, 5, 6, 7, 8, 9] : [j as digit]);
+    }
+  }
+
+  return result;
+};
+
 export const createEmptySudoku = (): SudokuListType => {
   return fromString("0".repeat(81));
 };

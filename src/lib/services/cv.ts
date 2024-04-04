@@ -5,24 +5,24 @@ class CV {
 
   constructor() {
     this._status = new Map();
-    // this.worker = new Worker('/js/worker.js') // load worker
-    // // Capture events and save [status, event] inside the _status object
-    // this.worker.onmessage = (e) => {
-    //     console.debug("Worker got a message", e)
-    //     if (e.data.error) {
-    //         (this._status.set(e.data.msg, ['error', e]));
-    //     } else {
-    //         if (e.data.msg === 'load') {
-    //             this.loaded = true;
-    //         }
-    //         (this._status.set(e.data.msg, ['done', e]));
-    //     }
-    //     console.debug(e);
-    // }
-    // this.worker.onerror = (e) => {
-    //     (this._status.set(e.message, ['error', e]));
-    //     console.debug(e);
-    // }
+    this.worker = new Worker("/js/worker.js"); // load worker
+    // Capture events and save [status, event] inside the _status object
+    this.worker.onmessage = (e) => {
+      console.debug("Worker got a message", e);
+      if (e.data.error) {
+        this._status.set(e.data.msg, ["error", e]);
+      } else {
+        if (e.data.msg === "load") {
+          this.loaded = true;
+        }
+        this._status.set(e.data.msg, ["done", e]);
+      }
+      console.debug(e);
+    };
+    this.worker.onerror = (e) => {
+      this._status.set(e.message, ["error", e]);
+      console.debug(e);
+    };
   }
 
   /**
@@ -59,6 +59,7 @@ class CV {
    * we are going to call the 'load' event, as we've just
    */
   load() {
+    console.debug("Loading Image into CV");
     if (!this.loaded) {
       return this._dispatch({ msg: "load" });
     }
