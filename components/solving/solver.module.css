@@ -1,7 +1,0 @@
-.controls {
-  @apply fixed bottom-0 left-0 flex w-full justify-center bg-white;
-}
-
-.controls button {
-  @apply p-4;
-}

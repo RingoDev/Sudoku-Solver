@@ -1,7 +1,7 @@
 import React from "react";
-import Solver from "../components/solving/solver";
-import { fromString } from "../lib/SudokuUtils";
-import { samples } from "../lib/sampleSudokus";
+import Solver from "../src/components/solving/solver";
+import { fromString } from "../src/lib/utils/sudoku";
+import { samples } from "../src/lib/sampleSudokus";
 import Head from "next/head";
 
 const App = () => {
