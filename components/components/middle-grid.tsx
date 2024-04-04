@@ -31,7 +31,7 @@ const MiddleGrid = ({
       <div
         key={index}
         className={
-          "align-center flex aspect-square w-full flex-col items-center justify-center text-center text-2xl outline outline-1 outline-offset-1 outline-slate-500"
+          "align-center flex aspect-square w-full flex-col items-center justify-center text-center text-2xl outline outline-1 outline-offset-2 outline-slate-500"
         }
         onClick={() => {
           setSelected(index);
