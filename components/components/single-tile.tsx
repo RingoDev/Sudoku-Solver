@@ -28,8 +28,9 @@ const SingleTile: React.FC<SudokuSingleProps> = ({
     return (
       <input
         className={
-          "flex aspect-square max-w-[75%] cursor-pointer items-center justify-center text-center"
+          "box-border max-w-[90%] max-h-[90%] cursor-pointer items-center justify-center text-center"
         }
+        style={{MozAppearance: "textfield"}}
         value={possibleValues.length === 1 ? possibleValues[0] : ""}
         onChange={handleChange}
         type={"number"}

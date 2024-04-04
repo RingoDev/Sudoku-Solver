@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useRef } from "react";
 import { digit, SudokuListType } from "../../lib/SudokuUtils";
 import MiddleGrid from "./middle-grid";
+import useOnClickOutside from "../../lib/hooks/useOnClickOutside";
 
 interface SudokuGridProps {
   sudoku: SudokuListType;
@@ -15,6 +16,11 @@ const SudokuGrid: React.FC<SudokuGridProps> = ({
   selected,
   setNumber,
 }) => {
+
+  const ref = useRef<HTMLDivElement>()
+  useOnClickOutside(ref, () => setSelected(-1))
+
+
   const getTransformedIndices = (middleGridIndex): any => {
     return [0, 1, 2, 9, 10, 11, 18, 19, 20].map(
       (v) =>
@@ -25,6 +31,7 @@ const SudokuGrid: React.FC<SudokuGridProps> = ({
   };
   return (
     <div
+      ref={ref}
       className={
         "mx-auto aspect-square p-4 sm:p-8 md:max-h-[90vh] md:w-[1024px] md:max-w-[90vh] md:p-16 "
       }
