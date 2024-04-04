@@ -6,7 +6,7 @@ type position = [row: number, column: number];
 
 // check for a combination of 2 numbers that only appear together and 2 times
 export default function hiddenTriples(
-  input: SudokuGridType
+  input: SudokuGridType,
 ): [boolean, SudokuGridType] {
   const sudoku = copyGrid(input);
   let changed = false;
@@ -22,7 +22,7 @@ export default function hiddenTriples(
         console.debug(
           "Found a hidden Triple in row",
           [rowIndex, colIndex],
-          found
+          found,
         );
         if (
           removeFromFields(
@@ -30,7 +30,7 @@ export default function hiddenTriples(
             [rowIndex, colIndex],
             found[0],
             found[1],
-            found[2]
+            found[2],
           )
         )
           changed = true;
@@ -41,7 +41,7 @@ export default function hiddenTriples(
         console.debug(
           "Found a hidden Triple in column ",
           [rowIndex, colIndex],
-          found
+          found,
         );
         if (
           removeFromFields(
@@ -49,7 +49,7 @@ export default function hiddenTriples(
             [rowIndex, colIndex],
             found[0],
             found[1],
-            found[2]
+            found[2],
           )
         )
           changed = true;
@@ -61,7 +61,7 @@ export default function hiddenTriples(
         console.debug(
           "Found a hidden Triple in 3x3 ",
           [rowIndex, colIndex],
-          found
+          found,
         );
         if (
           removeFromFields(
@@ -69,7 +69,7 @@ export default function hiddenTriples(
             [rowIndex, colIndex],
             found[0],
             found[1],
-            found[2]
+            found[2],
           )
         )
           changed = true;
@@ -83,7 +83,7 @@ function removeNonTriple(
   sudoku: SudokuGridType,
   field: digit[],
   triple: [number, number, number],
-  pos: position
+  pos: position,
 ) {
   let changed = false;
   const [newPossibles1, includedVal1] = filter(field, triple, true);
@@ -99,7 +99,7 @@ function reduceOverlapRow(
   pos: [row: number, column: number],
   j: number,
   k: number,
-  overlap: digit[]
+  overlap: digit[],
 ) {
   const [row, column] = pos;
 
@@ -120,7 +120,7 @@ function reduceOverlapColumn(
   pos: [row: number, column: number],
   i: number,
   k: number,
-  overlap: digit[]
+  overlap: digit[],
 ) {
   const [row, column] = pos;
 
@@ -144,7 +144,7 @@ function reduceOverlapColumn(
  */
 function hiddenTripleRow(
   sudoku: SudokuGridType,
-  pos: position
+  pos: position,
 ): [position, position, [number, number, number]] | undefined {
   const [row, column] = pos;
 
@@ -215,7 +215,7 @@ function getOverlap(arrays: digit[][]): digit[] {
  */
 function hiddenTripleColumn(
   sudoku: SudokuGridType,
-  pos: position
+  pos: position,
 ): [position, position, [number, number, number]] | undefined {
   const [row, column] = pos;
 
@@ -263,7 +263,7 @@ function hiddenTripleColumn(
  */
 function hiddenTriple3x3(
   sudoku: SudokuGridType,
-  [row, column]: position
+  [row, column]: position,
 ): [position, position, [number, number, number]] | undefined {
   const first = sudoku[row][column];
   if (typeof first === "number") return;
@@ -305,7 +305,7 @@ function hiddenTriple3x3(
             [row, column],
             [r, c],
             [x, y],
-            overlap
+            overlap,
           );
 
           // still 3 overlap, this is actually a hidden triple
@@ -326,7 +326,7 @@ function reduceOverlap3x3(
   [row, column]: position,
   [bRowSecond, bColSecond]: position,
   [bRowThird, bColThird]: position,
-  overlap: digit[]
+  overlap: digit[],
 ) {
   const boxRow = Math.floor(row / 3) * 3;
   const boxCol = Math.floor(column / 3) * 3;
@@ -353,7 +353,7 @@ function removeFromFields(
   first: position,
   second: position,
   third: position,
-  triple: [number, number, number]
+  triple: [number, number, number],
 ) {
   let changed = false;
 
@@ -384,7 +384,7 @@ function removeFromFields(
 function filter(
   array: digit[],
   values: number[],
-  opposite: boolean = false
+  opposite: boolean = false,
 ): [digit[], boolean] {
   console.debug("Filtering array: " + array + " from numbers: " + values);
 

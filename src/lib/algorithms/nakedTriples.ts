@@ -8,7 +8,7 @@ type triple = [number, number, number];
 
 // doesnt find xy,yz,xz todo
 export default function nakedTriples(
-  input: SudokuGridType
+  input: SudokuGridType,
 ): [boolean, SudokuGridType] {
   const sudoku = copyGrid(input);
   let changed = false;
@@ -34,7 +34,7 @@ export default function nakedTriples(
           [rowIndex, colIndex],
           "column of first: " + col1,
           "column of second: " + col2,
-          " With values: " + triple
+          " With values: " + triple,
         );
         // we have a naked triple in this row, we can erase its occurrences in all other possibility-arrays in this row
         for (let x = 0; x < sudoku.length; x++) {
@@ -58,7 +58,7 @@ export default function nakedTriples(
           [rowIndex, colIndex],
           [row1],
           [row2],
-          " With values: " + triple
+          " With values: " + triple,
         );
 
         // we have a naked triple in this column, we can erase its occurrences in all other possibility-arrays in this column
@@ -83,7 +83,7 @@ export default function nakedTriples(
           [rowIndex, colIndex],
           [row1, col1],
           [row2, col2],
-          " With values: " + triple
+          " With values: " + triple,
         );
         // we have a naked triple in this 3x3, we can erase its occurrences in all other possibility-arrays in this 3x3
 
@@ -121,7 +121,7 @@ export default function nakedTriples(
  */
 function nakedTripleRow(
   sudoku: SudokuGridType,
-  pos: position
+  pos: position,
 ): [position, position, [number, number, number]] | undefined {
   for (let j = 0; j < sudoku.length - 1; j++) {
     let second = findNextInRow(sudoku, pos, j);
@@ -154,7 +154,7 @@ function nakedTripleRow(
 function findNextInRow(
   sudoku: SudokuGridType,
   pos: position,
-  fromCol: number
+  fromCol: number,
 ): position | undefined {
   const [row, column] = pos;
 
@@ -176,7 +176,7 @@ function findNextInRow(
  */
 function nakedTripleColumn(
   sudoku: SudokuGridType,
-  pos: position
+  pos: position,
 ): [position, position, [number, number, number]] | undefined {
   for (let i = 0; i < sudoku.length - 1; i++) {
     let second = findNextInColumn(sudoku, pos, i);
@@ -209,7 +209,7 @@ function nakedTripleColumn(
 function findNextInColumn(
   sudoku: SudokuGridType,
   pos: position,
-  fromRow: number
+  fromRow: number,
 ): position | undefined {
   const [row, column] = pos;
   for (let i = fromRow; i < sudoku.length; i++) {
@@ -224,7 +224,7 @@ function findNextInColumn(
 
 function nakedTriple3x3(
   sudoku: SudokuGridType,
-  pos: position
+  pos: position,
 ): [position, position, [number, number, number]] | undefined {
   for (let r = 0; r < 3; r++) {
     for (let c = 0; c < 3; c++) {
@@ -272,7 +272,7 @@ function nakedTriple3x3(
 function findNextIn3x3(
   sudoku: SudokuGridType,
   pos: position,
-  fromPos: position
+  fromPos: position,
 ): [position, position] | undefined {
   const [row, column] = pos;
 
@@ -303,7 +303,7 @@ function getValues(
   sudoku: SudokuGridType,
   pos1: position,
   pos2: position,
-  pos3: position
+  pos3: position,
 ) {
   // check if the 3 found fields combined contain exactly 3 different values
   const values1 = sudoku[pos1[0]][pos1[1]];

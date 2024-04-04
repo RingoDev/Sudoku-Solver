@@ -15,7 +15,7 @@ function normalizeIndex(middleGridIndex: number, innerIndex: number): number {
     (v) =>
       v +
       3 * Math.floor(middleGridIndex % 3) +
-      27 * Math.floor(middleGridIndex / 3)
+      27 * Math.floor(middleGridIndex / 3),
   )[innerIndex];
 }
 

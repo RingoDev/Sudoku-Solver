@@ -6,7 +6,7 @@ type position = [row: number, column: number];
 
 // check for a combination of 2 numbers that only appear together and 2 times
 export default function hiddenPairs(
-  input: SudokuGridType
+  input: SudokuGridType,
 ): [boolean, SudokuGridType] {
   const sudoku = copyGrid(input);
   let changed = false;
@@ -22,7 +22,7 @@ export default function hiddenPairs(
         console.debug(
           "Found a hidden Pair in row",
           [rowIndex, colIndex],
-          found
+          found,
         );
         if (removeFromFields(sudoku, found, [rowIndex, colIndex]))
           changed = true;
@@ -33,7 +33,7 @@ export default function hiddenPairs(
         console.debug(
           "Found a hidden Pair in column ",
           [rowIndex, colIndex],
-          found
+          found,
         );
         if (removeFromFields(sudoku, found, [rowIndex, colIndex]))
           changed = true;
@@ -45,7 +45,7 @@ export default function hiddenPairs(
         console.debug(
           "Found a hidden Pair in 3x3 ",
           [rowIndex, colIndex],
-          found
+          found,
         );
         if (removeFromFields(sudoku, found, [rowIndex, colIndex]))
           changed = true;
@@ -59,7 +59,7 @@ function removeNonPair(
   sudoku: SudokuGridType,
   field: digit[],
   pair: [number, number],
-  pos: [rowIndex: number, colIndex: number]
+  pos: [rowIndex: number, colIndex: number],
 ) {
   let changed = false;
   const [newPossibles1, includedVal1] = filter(field, pair, true);
@@ -78,7 +78,7 @@ function removeNonPair(
  */
 function hiddenPairRow(
   sudoku: SudokuGridType,
-  pos: position
+  pos: position,
 ): [position, [number, number]] | undefined {
   const [row, column] = pos;
 
@@ -130,7 +130,7 @@ function getOverlap(array1: digit[], array2: digit[]): digit[] {
  */
 function hiddenPairColumn(
   sudoku: SudokuGridType,
-  pos: position
+  pos: position,
 ): [position, [number, number]] | undefined {
   const [row, column] = pos;
 
@@ -174,7 +174,7 @@ function hiddenPairColumn(
  */
 function hiddenPair3x3(
   sudoku: SudokuGridType,
-  pos: position
+  pos: position,
 ): [position, [number, number]] | undefined {
   const [row, column] = pos;
 
@@ -223,7 +223,7 @@ function hiddenPair3x3(
 function removeFromFields(
   sudoku: SudokuGridType,
   found: [[row: number, column: number], [number, number]],
-  pos: [rowIndex: number, colIndex: number]
+  pos: [rowIndex: number, colIndex: number],
 ) {
   const [rowIndex, colIndex] = pos;
   const [[row, col], pair] = found;
@@ -250,7 +250,7 @@ function removeFromFields(
 function filter(
   array: digit[],
   values: number[],
-  opposite: boolean = false
+  opposite: boolean = false,
 ): [digit[], boolean] {
   console.debug("Filtering array: " + array + " from numbers: " + values);
 

@@ -24,7 +24,7 @@ const SudokuGrid: React.FC<SudokuGridProps> = ({
       (v) =>
         v +
         3 * Math.floor(middleGridIndex % 3) +
-        27 * Math.floor(middleGridIndex / 3)
+        27 * Math.floor(middleGridIndex / 3),
     );
   };
   return (
@@ -54,7 +54,7 @@ const SudokuGrid: React.FC<SudokuGridProps> = ({
               }}
               gridIndex={index}
               values={getTransformedIndices(index).map(
-                (x: number) => sudoku[x]
+                (x: number) => sudoku[x],
               )}
             />
           </div>

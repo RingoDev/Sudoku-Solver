@@ -36,7 +36,7 @@ export default function StaticImage() {
           0,
           0,
           imgElement.current.width,
-          imgElement.current.height
+          imgElement.current.height,
         );
         // Load the model
         await cv.load();

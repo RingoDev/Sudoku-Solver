@@ -2,7 +2,7 @@
 import { copyGrid, digit, SudokuGridType } from "../utils/sudoku";
 
 export const reducePossibles = (
-  input: SudokuGridType
+  input: SudokuGridType,
 ): [boolean, SudokuGridType] => {
   const sudoku = copyGrid(input);
   let changed = false;
@@ -53,7 +53,7 @@ function validateField(
   sudoku: SudokuGridType,
   row: number,
   column: number,
-  value: digit
+  value: digit,
 ) {
   const boxRow = Math.floor(row / 3) * 3;
   const boxCol = Math.floor(column / 3) * 3;

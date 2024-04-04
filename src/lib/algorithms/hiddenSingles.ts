@@ -2,7 +2,7 @@
 import { copyGrid, digit, SudokuGridType } from "../utils/sudoku";
 
 export default function hiddenSingles(
-  input: SudokuGridType
+  input: SudokuGridType,
 ): [boolean, SudokuGridType] {
   const sudoku = copyGrid(input);
   let changed = false;
@@ -54,7 +54,7 @@ function countInField(
   sudoku: SudokuGridType,
   row: number,
   column: number,
-  value: digit
+  value: digit,
 ) {
   let sum = 0;
   const boxRow = Math.floor(row / 3) * 3;

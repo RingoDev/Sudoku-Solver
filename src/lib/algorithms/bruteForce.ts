@@ -11,7 +11,7 @@ export function bruteForce(input: SudokuGridType) {
 const digits: digit[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 export function getNextFree(
-  sudoku: SudokuGridType
+  sudoku: SudokuGridType,
 ): [row: number, col: number] {
   for (let row = 0; row < 9; row++) {
     for (let col = 0; col < 9; col++) {
@@ -46,7 +46,7 @@ function isValid(
   sudoku: SudokuGridType,
   row: number,
   column: number,
-  value: digit
+  value: digit,
 ) {
   return (
     validateColumn(sudoku, column, value) &&
@@ -158,7 +158,7 @@ function validateField(
   sudoku: SudokuGridType,
   row: number,
   column: number,
-  value: digit
+  value: digit,
 ) {
   const boxRow = Math.floor(row / 3) * 3;
   const boxCol = Math.floor(column / 3) * 3;

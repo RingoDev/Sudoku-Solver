@@ -25,7 +25,7 @@ const Video: React.FC<VideoProps> = (props) => {
 
   // const [outputURL, setOutputURL] = useState<string>();
   const [videoStream, setVideoStream] = useState<MediaStream | undefined>(
-    undefined
+    undefined,
   );
   const [predictions, setPredictions] = useState<SudokuGridType>(getEmpty());
 

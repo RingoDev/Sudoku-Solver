@@ -2,7 +2,7 @@ import { copyGrid, digit, SudokuGridType } from "../utils/sudoku";
 
 //https://www.sudokuwiki.org/Naked_Candidates#NP
 export default function nakedPairs(
-  input: SudokuGridType
+  input: SudokuGridType,
 ): [boolean, SudokuGridType] {
   const sudoku = copyGrid(input);
   let changed = false;
@@ -21,7 +21,7 @@ export default function nakedPairs(
           "Found a naked Pair in row",
           [rowIndex, colIndex],
           found,
-          " With values: " + pair
+          " With values: " + pair,
         );
         for (let x = 0; x < sudoku.length; x++) {
           if (found[1] === x || colIndex === x) continue; // leave our counterpart and ourself out
@@ -43,7 +43,7 @@ export default function nakedPairs(
           "Found a naked Pair in column ",
           [rowIndex, colIndex],
           found,
-          " With values: " + pair
+          " With values: " + pair,
         );
         // we have a naked pair in this column, we can erase its occurrences in all other possibility-arrays in this column except counterpart
         for (let x = 0; x < sudoku.length; x++) {
@@ -65,7 +65,7 @@ export default function nakedPairs(
           "Found a naked Pair in 3x3 ",
           [rowIndex, colIndex],
           found,
-          " With values: " + pair
+          " With values: " + pair,
         );
 
         const boxRow = Math.floor(rowIndex / 3) * 3;
@@ -118,7 +118,7 @@ function nakedPairColumn(
   sudoku: SudokuGridType,
   row: number,
   column: number,
-  pair: [digit, digit]
+  pair: [digit, digit],
 ): [row: number, col: number] | undefined {
   for (let i = 0; i < sudoku.length; i++) {
     if (i === row) continue; // dont check pair against itself
@@ -135,7 +135,7 @@ function nakedPairRow(
   sudoku: SudokuGridType,
   row: number,
   column: number,
-  pair: [digit, digit]
+  pair: [digit, digit],
 ): [row: number, col: number] | undefined {
   for (let i = 0; i < sudoku.length; i++) {
     if (i === column) continue; // dont check pair against itself
@@ -156,7 +156,7 @@ function nakedPair3x3(
   sudoku: SudokuGridType,
   row: number,
   column: number,
-  pair: [digit, digit]
+  pair: [digit, digit],
 ): [row: number, col: number] | undefined {
   const boxRow = Math.floor(row / 3) * 3;
   const boxCol = Math.floor(column / 3) * 3;

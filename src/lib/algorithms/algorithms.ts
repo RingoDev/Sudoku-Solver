@@ -8,7 +8,7 @@ import { copyGrid, SudokuGridType } from "../utils/sudoku";
 
 // finds single fields with 1 possible value and reformats
 export const checkSolved = (
-  input: SudokuGridType
+  input: SudokuGridType,
 ): [boolean, SudokuGridType] => {
   const sudoku = copyGrid(input);
   let changed = false;

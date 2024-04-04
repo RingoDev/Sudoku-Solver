@@ -48,7 +48,7 @@ const CameraSelector: React.FC<CameraSelectorProps> = (props) => {
     console.log(
       "navigator.MediaDevices.getUserMedia error: ",
       error.message,
-      error.name
+      error.name,
     );
   }
 
