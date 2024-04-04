@@ -1,5 +1,5 @@
 // reduces the possible solutions for every field
-import { copyGrid, digit, SudokuGridType } from "../utils/sudoku";
+import { SudokuGridType, copyGrid, digit } from "../utils/sudoku";
 
 export const reducePossibles = (
   input: SudokuGridType,

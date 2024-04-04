@@ -1,9 +1,8 @@
 import React from "react";
-import { SudokuGridType } from "../../lib/utils/sudoku";
 
 import dynamic from "next/dynamic";
 
-const Picture = dynamic(() => import("./Picture"), {
+const Picture = dynamic(() => import("./uploaded-image"), {
   ssr: false,
 });
 
@@ -11,13 +10,8 @@ interface ScannerProps {
   // solveSudoku: (val: SudokuGridType) => void;
 }
 
-const Scanner: React.FC<ScannerProps> = (props) => {
-  return (
-    <>
-      <Picture />
-      {/*<Video solveSudoku={props.solveSudoku} />*/}
-    </>
-  );
+const Scanner: React.FC<ScannerProps> = () => {
+  return <Picture />;
 };
 
 export default Scanner;

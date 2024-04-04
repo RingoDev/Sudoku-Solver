@@ -55,7 +55,7 @@ export const listToGrid = (sudoku: SudokuListType): SudokuGridType => {
   for (let i = 0; i < 9; i++) {
     const sRow: (digit | digit[])[] = [];
     for (let j = 0; j < 9; j++) {
-      let sNumber: digit | digit[];
+      // let sNumber: digit | digit[];
       const possibleValues = sudoku[i * 9 + j];
       possibleValues.length === 1
         ? sRow.push(possibleValues[0])

@@ -9,11 +9,20 @@ import { useRouter } from "next/router";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [sudoku, setSudoku] = useState(fromString(samples[2]));
+  const [uploadedImage, setUploadedImage] = useState();
+  const [processedImages, setProcessedImages] = useState();
+
   const router = useRouter();
 
   return (
     <SudokuContextProvider value={{ sudoku, setSudoku }}>
       <div className={"flex justify-center"}>
+      <Link
+          className={"p-2" + (router.pathname == "/upload" ? " font-bold" : "")}
+          href={"/upload"}
+        >
+          Upload
+        </Link>
         <Link
           className={"p-2" + (router.pathname == "/scan" ? " font-bold" : "")}
           href={"/scan"}

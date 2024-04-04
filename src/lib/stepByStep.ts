@@ -3,9 +3,8 @@ import algorithms from "./algorithms/algorithms";
 
 export class StepSolver {
   private history: [col: number, row: number, value: number][] = [];
-  private waysToSolve: ((
-    sudoku: SudokuGridType,
-  ) => [boolean, SudokuGridType])[] = [];
+  private waysToSolve: ((_: SudokuGridType) => [boolean, SudokuGridType])[] =
+    [];
   private states: SudokuGridType[] = [];
   private startState;
 

@@ -4,11 +4,11 @@ import { digit } from "../../lib/utils/sudoku";
 import PossibleGrid from "./possible-grid";
 
 interface SudokuSingleProps {
-  setSelected: (index: number) => void;
+  setSelected: (_index: number) => void;
   selected: number;
   index: number;
   possibleValues: digit[];
-  setNumber: (number: digit) => void;
+  setNumber: (_number: digit) => void;
 }
 
 const SingleTile: React.FC<SudokuSingleProps> = ({

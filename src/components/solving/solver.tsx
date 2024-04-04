@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
 import styles from "./solver.module.css";
 import {
+  SudokuListType,
   digit,
   gridToList,
   listToGrid,
-  SudokuListType,
 } from "../../lib/utils/sudoku";
 import SudokuGrid from "../sudoku/sudoku-grid";
 import algorithms from "../../lib/algorithms/algorithms";
 import {
-  ChevronRight,
-  ChevronsRight,
   ChevronLeft,
+  ChevronRight,
   ChevronsLeft,
+  ChevronsRight,
 } from "lucide-react";
 import { bruteForce } from "../../lib/algorithms/bruteForce";
 

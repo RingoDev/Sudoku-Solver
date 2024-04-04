@@ -1,4 +1,4 @@
-import { copyGrid, digit, SudokuGridType } from "../utils/sudoku";
+import { SudokuGridType, copyGrid, digit } from "../utils/sudoku";
 
 //https://www.sudokuwiki.org/Naked_Candidates#NP
 export default function nakedPairs(

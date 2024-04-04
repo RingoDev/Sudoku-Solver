@@ -4,7 +4,7 @@ import { reducePossibles } from "./reducePossibles";
 import nakedTriples from "./nakedTriples";
 import hiddenPairs from "./hiddenPairs";
 import hiddenTriples from "./hiddenTriples";
-import { copyGrid, SudokuGridType } from "../utils/sudoku";
+import { SudokuGridType, copyGrid } from "../utils/sudoku";
 
 // finds single fields with 1 possible value and reformats
 export const checkSolved = (
@@ -23,7 +23,7 @@ export const checkSolved = (
   return [changed, sudoku];
 };
 
-const algorithms: ((sudoku: SudokuGridType) => [boolean, SudokuGridType])[] = [
+const algorithms: ((_: SudokuGridType) => [boolean, SudokuGridType])[] = [
   checkSolved,
   reducePossibles,
   hiddenSingles,

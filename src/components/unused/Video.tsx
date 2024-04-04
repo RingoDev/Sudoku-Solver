@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import cv from "../../lib/services/cv";
 import CameraSelector from "./CameraSelector";
-import SudokuGrid from "../sudoku/sudoku-grid";
-import { digit, getEmpty, SudokuGridType } from "../../lib/utils/sudoku";
+import { SudokuGridType, digit, getEmpty } from "../../lib/utils/sudoku";
 
 const height = 800;
 const width = 800;

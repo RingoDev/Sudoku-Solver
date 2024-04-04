@@ -1,13 +1,13 @@
-import React, { createRef, useRef } from "react";
-import { digit, SudokuListType } from "../../lib/utils/sudoku";
+import React, { createRef } from "react";
+import { SudokuListType, digit } from "../../lib/utils/sudoku";
 import MiddleGrid from "./middle-grid";
 import useOnClickOutside from "../../lib/hooks/useOnClickOutside";
 
 interface SudokuGridProps {
   sudoku: SudokuListType;
-  setSelected: (number: number) => void;
+  setSelected: (_: number) => void;
   selected: number;
-  setNumber: (number: digit, index: number) => void;
+  setNumber: (_number: digit, _index: number) => void;
 }
 
 const SudokuGrid: React.FC<SudokuGridProps> = ({

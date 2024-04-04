@@ -1,4 +1,4 @@
-import { copyGrid, digit, SudokuGridType } from "../utils/sudoku";
+import { SudokuGridType, copyGrid, digit } from "../utils/sudoku";
 
 // todo dont change input sudoku
 export function bruteForce(input: SudokuGridType) {

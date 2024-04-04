@@ -1,5 +1,5 @@
 // checks if a field is the only possible solution in its row, col or field
-import { copyGrid, digit, SudokuGridType } from "../utils/sudoku";
+import { SudokuGridType, copyGrid, digit } from "../utils/sudoku";
 
 export default function hiddenSingles(
   input: SudokuGridType,
