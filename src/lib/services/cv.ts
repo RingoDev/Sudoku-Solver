@@ -80,5 +80,7 @@ class CV {
   }
 }
 
+const cv = new CV();
+
 // Export the same instant everywhere
-export default new CV();
+export default cv;
