@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styles from "./solver.module.css";
 import {
   SudokuListType,
@@ -14,21 +14,20 @@ import {
   ChevronsLeft,
   ChevronsRight,
 } from "lucide-react";
-import { bruteForce } from "../../lib/algorithms/bruteForce";
 
 interface SolverProps {
   sudoku: SudokuListType;
 }
 
 const Solver: React.FC<SolverProps> = (props) => {
-  const [solved, setSolved] = useState<SudokuListType>();
+  // const [solved, setSolved] = useState<SudokuListType>();
   const [displayed, setDisplayed] = useState<SudokuListType>(props.sudoku);
 
-  useEffect(() => {
-    if (solved === undefined) {
-      setSolved(gridToList(bruteForce(listToGrid(props.sudoku))));
-    }
-  }, [setSolved, props.sudoku, solved]);
+  // useEffect(() => {
+  //   if (solved === undefined) {
+  //     setSolved(gridToList(bruteForce(listToGrid(props.sudoku))));
+  //   }
+  // }, [setSolved, props.sudoku, solved]);
 
   //eslint-disable-next-line
   const stepBack = () => {
@@ -55,8 +54,8 @@ const Solver: React.FC<SolverProps> = (props) => {
     setDisplayed(props.sudoku);
   };
   const goEnd = () => {
-    if (solved == undefined) alert("Sudoku not solvable");
-    else setDisplayed(solved);
+    // if (solved == undefined) alert("Sudoku not solvable");
+    // else setDisplayed(solved);
   };
 
   const setNumberAtIndex = (value: digit, index: number) => {

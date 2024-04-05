@@ -68,7 +68,11 @@ const Upload = () => {
             height={height}
             width={width}
           />
-          <div className={"flex justify-center mt-2"}>
+          <div
+            className={
+              "flex justify-center mt-2 bg-green-500 hover:bg-green-400 text-white font-bold py-2 px-4 rounded p-2"
+            }
+          >
             <button onClick={() => setImageAndNavigate()}>Scan</button>
           </div>
         </>

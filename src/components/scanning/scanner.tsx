@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 
 import { SudokuContext } from "../../contexts/sudoku-context";
 import useImageInferrer from "../../lib/hooks/useImageInferrer";
