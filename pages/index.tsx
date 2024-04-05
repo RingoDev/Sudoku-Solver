@@ -21,6 +21,7 @@ const Upload = () => {
     const inputElement = document.createElement("input");
     inputElement.type = "file";
     inputElement.accept = "image/*";
+    inputElement.capture = "environment"
     inputElement.onchange = () => {
       if (inputElement.files !== null) {
         const file = inputElement.files[0];
