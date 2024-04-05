@@ -9,22 +9,14 @@ const Picture = () => {
   const sudokuContext = useContext(SudokuContext);
   const { imageUrl } = useContext(ImageContext);
 
-  const [processing, inferrence] = useImageInferrer(
+  const [processing, parsedSudoku] = useImageInferrer(
     imageUrl,
     sudokuContext.sudoku === undefined,
   );
 
   const sudokuToDisplay = sudokuContext.sudoku
     ? sudokuContext.sudoku
-    : inferrence;
-
-  useEffect(() => {
-    // maybe check if configured global sudoku is same as inferred one
-    // or only set sudoku after manual button click
-    if (inferrence) {
-      sudokuContext.setSudoku(inferrence);
-    }
-  }, [inferrence, sudokuContext.setSudoku, sudokuContext]);
+    : parsedSudoku;
 
   return (
     <>
