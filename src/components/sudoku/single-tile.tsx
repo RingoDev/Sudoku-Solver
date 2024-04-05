@@ -4,6 +4,7 @@ import { digit } from "../../lib/utils/sudoku";
 import PossibleGrid from "./possible-grid";
 
 interface SudokuSingleProps {
+  showPossibleValues: boolean;
   setSelected: (_index: number) => void;
   selected: number;
   index: number;
@@ -12,6 +13,7 @@ interface SudokuSingleProps {
 }
 
 const SingleTile: React.FC<SudokuSingleProps> = ({
+  showPossibleValues,
   selected,
   possibleValues,
   index,
@@ -39,11 +41,15 @@ const SingleTile: React.FC<SudokuSingleProps> = ({
     );
   }
 
-  return possibleValues.length === 1 ? (
-    <InnerField value={possibleValues[0]} />
-  ) : (
-    <PossibleGrid values={possibleValues} />
-  );
+  if (possibleValues.length === 1) {
+    return <InnerField value={possibleValues[0]} />;
+  }
+
+  if (showPossibleValues) {
+    return <PossibleGrid values={possibleValues} />;
+  }
+
+  return <InnerField value={0} />;
 };
 
 export default SingleTile;

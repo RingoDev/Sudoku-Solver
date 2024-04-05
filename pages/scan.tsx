@@ -1,6 +1,10 @@
 import React from "react";
-import Scanner from "../src/components/scanning/Scanner";
 import Head from "next/head";
+import dynamic from "next/dynamic";
+
+const Picture = dynamic(() => import("../src/components/scanning/scanner"), {
+  ssr: false,
+});
 
 const Scan = () => {
   return (
@@ -8,7 +12,7 @@ const Scan = () => {
       <Head>
         <title>Sudoku Solver | RingoDev</title>
       </Head>
-      <Scanner />
+      <Picture />
     </>
   );
 };

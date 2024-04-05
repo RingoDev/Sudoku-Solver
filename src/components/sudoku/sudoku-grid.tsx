@@ -4,6 +4,7 @@ import MiddleGrid from "./middle-grid";
 import useOnClickOutside from "../../lib/hooks/useOnClickOutside";
 
 interface SudokuGridProps {
+  showPossibleValues: boolean;
   sudoku: SudokuListType;
   setSelected: (_: number) => void;
   selected: number;
@@ -11,6 +12,7 @@ interface SudokuGridProps {
 }
 
 const SudokuGrid: React.FC<SudokuGridProps> = ({
+  showPossibleValues,
   sudoku,
   setSelected,
   selected,
@@ -47,6 +49,7 @@ const SudokuGrid: React.FC<SudokuGridProps> = ({
             }
           >
             <MiddleGrid
+              showPossibleValues={showPossibleValues}
               setNumber={setNumber}
               selected={selected}
               setSelected={(innerIndex) => {

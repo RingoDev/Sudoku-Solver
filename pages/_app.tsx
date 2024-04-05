@@ -1,43 +1,46 @@
-import type { AppProps } from "next/app";
 import "../styles/globals.css";
 import { SudokuContextProvider } from "../src/contexts/sudoku-context";
-import { fromString } from "../src/lib/utils/sudoku";
-import { samples } from "../src/lib/sampleSudokus";
+import { SudokuListType } from "../src/lib/utils/sudoku";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { ImageContextProvider } from "../src/contexts/uploaded-image-context";
+import { AppProps } from "next/app";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const [sudoku, setSudoku] = useState(fromString(samples[2]));
-  const [uploadedImage, setUploadedImage] = useState();
-  const [processedImages, setProcessedImages] = useState();
+  const [sudoku, setSudoku] = useState<SudokuListType>();
+  const [imageUrl, setImageUrl] = useState<string>();
 
   const router = useRouter();
 
   return (
-    <SudokuContextProvider value={{ sudoku, setSudoku }}>
-      <div className={"flex justify-center"}>
-      <Link
-          className={"p-2" + (router.pathname == "/upload" ? " font-bold" : "")}
-          href={"/upload"}
-        >
-          Upload
-        </Link>
-        <Link
-          className={"p-2" + (router.pathname == "/scan" ? " font-bold" : "")}
-          href={"/scan"}
-        >
-          Scanner
-        </Link>
-        <Link
-          className={"p-2" + (router.pathname == "/" ? " font-bold" : "")}
-          href={"/"}
-        >
-          Solver
-        </Link>
-      </div>
-      <Component {...pageProps} />
-    </SudokuContextProvider>
+    <ImageContextProvider value={{ imageUrl, setImageUrl }}>
+      <SudokuContextProvider value={{ sudoku, setSudoku }}>
+        <div className={"flex"}>
+          <Link
+            className={"p-2" + (router.pathname == "/" ? " font-bold" : "")}
+            href={"/"}
+          >
+            Upload
+          </Link>
+          <Link
+            className={"p-2" + (router.pathname == "/scan" ? " font-bold" : "")}
+            href={"/scan"}
+          >
+            Scanner
+          </Link>
+          <Link
+            className={
+              "p-2" + (router.pathname == "/solve" ? " font-bold" : "")
+            }
+            href={"/solve"}
+          >
+            Solver
+          </Link>
+        </div>
+        <Component {...pageProps} />
+      </SudokuContextProvider>
+    </ImageContextProvider>
   );
 }
 

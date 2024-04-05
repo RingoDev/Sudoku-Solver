@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import cv from "../services/cv";
 import { SudokuListType, fromPredictions } from "../utils/sudoku";
 
-function useImageInferrer(imageRef: React.RefObject<HTMLImageElement>) {
+function useImageInferrer(imageUrl?: string, shouldTrigger?: boolean) {
   const height = 800;
   const width = 800;
 
@@ -10,12 +10,18 @@ function useImageInferrer(imageRef: React.RefObject<HTMLImageElement>) {
   const [inference, setInference] = useState<SudokuListType>();
 
   useEffect(() => {
+    console.log(imageUrl);
+    if (imageUrl === undefined || !shouldTrigger) return;
     setProcessing(true);
 
-    const canvasElement = document.createElement("canvas", {});
+    const imageElement = document.createElement("img");
+    imageElement.width = width;
+    imageElement.height = height;
+    imageElement.src = imageUrl;
+
+    const canvasElement = document.createElement("canvas");
     canvasElement.width = width;
     canvasElement.height = height;
-    canvasElement.hidden = true;
 
     console.log("test");
     cv.load().then(() => {
@@ -23,10 +29,10 @@ function useImageInferrer(imageRef: React.RefObject<HTMLImageElement>) {
 
       console.log("hello");
 
-      if (ctx !== null && ctx !== undefined && imageRef.current !== null) {
+      if (ctx !== null && ctx !== undefined) {
         console.log("hi");
         // draw loaded image onto canvas
-        ctx.drawImage(imageRef.current, 0, 0, width, height);
+        ctx.drawImage(imageElement, 0, 0, width, height);
 
         // retrieve binary image data from canvas
         const image = ctx.getImageData(0, 0, width, height);
@@ -39,7 +45,7 @@ function useImageInferrer(imageRef: React.RefObject<HTMLImageElement>) {
       }
     });
     return () => canvasElement.remove();
-  }, [imageRef]);
+  }, [imageUrl, shouldTrigger]);
 
   return [processing, inference] as const;
 }

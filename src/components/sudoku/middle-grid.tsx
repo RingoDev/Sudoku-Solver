@@ -3,9 +3,10 @@ import React from "react";
 import { digit } from "../../lib/utils/sudoku";
 
 interface Props {
-  setSelected: (index: number) => void;
+  showPossibleValues: boolean;
+  setSelected: (_index: number) => void;
   selected: number;
-  setNumber: (value: digit, index: number) => void;
+  setNumber: (_value: digit, _index: number) => void;
   values: digit[][];
   gridIndex: number;
 }
@@ -20,6 +21,7 @@ function normalizeIndex(middleGridIndex: number, innerIndex: number): number {
 }
 
 const MiddleGrid = ({
+  showPossibleValues,
   setSelected,
   selected,
   setNumber,
@@ -39,6 +41,7 @@ const MiddleGrid = ({
         }}
       >
         <SingleTile
+          showPossibleValues={showPossibleValues}
           setSelected={setSelected}
           selected={selected}
           index={normalizeIndex(gridIndex, index)}

@@ -1,18 +1,80 @@
-import React, { useContext } from "react";
-import Solver from "../src/components/solving/solver";
-import Head from "next/head";
-import { SudokuContext } from "../src/contexts/sudoku-context";
+import React, { useContext, useRef, useState } from "react";
 
-const App = () => {
-  const sudokuContext = useContext(SudokuContext);
+import { ImageContext } from "../src/contexts/uploaded-image-context";
+import { useRouter } from "next/router";
+
+const height = 800;
+const width = 800;
+
+const Upload = () => {
+  const router = useRouter();
+
+  const imageContext = useContext(ImageContext);
+
+  const [imgUrl, setImgUrl] = useState<string | undefined>(
+    imageContext.imageUrl,
+  );
+
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  const uploadFile = () => {
+    const inputElement = document.createElement("input");
+    inputElement.type = "file";
+    inputElement.accept = "image/*";
+    inputElement.onchange = () => {
+      if (inputElement.files !== null) {
+        const file = inputElement.files[0];
+        if (file) {
+          setImgUrl(URL.createObjectURL(file));
+        }
+      }
+    };
+    inputElement.click();
+    inputElement.remove();
+  };
+
+  const setImageAndNavigate = () => {
+    imageContext.setImageUrl(imgUrl || "");
+    router.push("/scan");
+  };
+
   return (
-    <>
-      <Head>
-        <title>Sudoku Solver | RingoDev</title>
-      </Head>
-      <Solver sudoku={sudokuContext.sudoku} />
-    </>
+    <div className={"p-4"}>
+      <div className={"flex justify-center mb-2 "}>
+        <button
+          className={
+            "bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded p-2"
+          }
+          onClick={() => uploadFile()}
+        >
+          {" "}
+          Upload
+        </button>
+        <button
+          className={"p-2"}
+          onClick={() => setImgUrl("/img/sudoku-original.jpg")}
+        >
+          Use default
+        </button>
+      </div>
+
+      {imgUrl ? (
+        <>
+          <img
+            className={"max-h-60 object-contain"}
+            ref={imgRef}
+            src={imgUrl}
+            height={height}
+            width={width}
+          />
+          <div className={"flex justify-center mt-2"}>
+            <button onClick={() => setImageAndNavigate()}>Scan</button>
+          </div>
+        </>
+      ) : (
+        <></>
+      )}
+    </div>
   );
 };
-
-export default App;
+export default Upload;

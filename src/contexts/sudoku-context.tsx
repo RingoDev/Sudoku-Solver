@@ -1,9 +1,12 @@
 import { createContext } from "react";
 import { SudokuListType, createEmptySudoku } from "../lib/utils/sudoku";
 
-const sudokuContext = createContext({
+const sudokuContext = createContext<{
+  sudoku: SudokuListType | undefined;
+  setSudoku: (_: SudokuListType | undefined) => void;
+}>({
   sudoku: createEmptySudoku(),
-  setSudoku: (_: SudokuListType) => {},
+  setSudoku: (_: SudokuListType | undefined) => {},
 });
 
 export const SudokuContext = sudokuContext;

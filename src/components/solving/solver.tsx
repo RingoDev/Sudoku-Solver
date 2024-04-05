@@ -23,7 +23,6 @@ interface SolverProps {
 const Solver: React.FC<SolverProps> = (props) => {
   const [solved, setSolved] = useState<SudokuListType>();
   const [displayed, setDisplayed] = useState<SudokuListType>(props.sudoku);
-  const [selected, setSelected] = useState<number>(-1);
 
   useEffect(() => {
     if (solved === undefined) {
@@ -68,9 +67,10 @@ const Solver: React.FC<SolverProps> = (props) => {
   return (
     <>
       <SudokuGrid
+        showPossibleValues
         sudoku={displayed}
-        setSelected={setSelected}
-        selected={selected}
+        setSelected={() => {}}
+        selected={-1}
         setNumber={setNumberAtIndex}
       />
       <div className={styles.controls}>
