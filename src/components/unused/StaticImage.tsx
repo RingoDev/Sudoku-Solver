@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import cv from "../../lib/services/cv";
+import cv from "../../worker/queue";
 
 // We'll limit the processing size to 200px.
 const maxVideoSize = 200;

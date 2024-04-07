@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import cv from "../services/cv";
+import cv from "../../worker/queue";
 import { SudokuListType, fromPredictions } from "../utils/sudoku";
 
 function useImageInferrer(imageUrl?: string, shouldTrigger?: boolean) {

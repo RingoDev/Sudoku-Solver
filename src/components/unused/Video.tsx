@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import cv from "../../lib/services/cv";
+import cv from "../../worker/queue";
 import CameraSelector from "./CameraSelector";
 import { SudokuGridType, digit, getEmpty } from "../../lib/utils/sudoku";
 
