@@ -1,5 +1,41 @@
 export type Point = { x: number; y: number };
 
+import type * as cv from "mirada/dist/src/types/opencv/_types";
+import { OpenCV } from "./worker";
+
+export function imageDataFromMat(cv: OpenCV, mat: cv.Mat) {
+  // converts the mat type to cv.CV_8U
+  const img = new cv.Mat();
+  const depth = mat.type() % 8;
+  const scale =
+    depth <= cv.CV_8S ? 1.0 : depth <= cv.CV_32S ? 1.0 / 256.0 : 255.0;
+  const shift = depth === cv.CV_8S || depth === cv.CV_16S ? 128.0 : 0.0;
+  mat.convertTo(img, cv.CV_8U, scale, shift);
+
+  // converts the img type to cv.CV_8UC4
+  switch (img.type()) {
+    case cv.CV_8UC1:
+      cv.cvtColor(img, img, cv.COLOR_GRAY2RGBA);
+      break;
+    case cv.CV_8UC3:
+      cv.cvtColor(img, img, cv.COLOR_RGB2RGBA);
+      break;
+    case cv.CV_8UC4:
+      break;
+    default:
+      throw new Error(
+        "Bad number of channels (Source image must have 1, 3 or 4 channels)",
+      );
+  }
+  const clampedArray = new ImageData(
+    new Uint8ClampedArray(img.data),
+    img.cols,
+    img.rows,
+  );
+  img.delete();
+  return clampedArray;
+}
+
 /**
  *
  * @param corners {[{x:number,y:number},{x:number,y:number},{x:number,y:number},{x:number,y:number}]}
@@ -7,7 +43,7 @@ export type Point = { x: number; y: number };
  * @return {cv.Mat}
  */
 export function getTransformationMatrix(
-  cv,
+  cv: OpenCV,
   corners: [Point, Point, Point, Point],
   maxLength: number,
 ) {
@@ -51,7 +87,7 @@ export function getCornerPoints(
     },
   ];
   const minDist = [Infinity, Infinity, Infinity, Infinity];
-  const corners = [
+  const corners: [Point, Point, Point, Point] = [
     { x: -1, y: -1 },
     { x: -1, y: -1 },
     { x: -1, y: -1 },
@@ -88,8 +124,8 @@ export function getMaxLength(corners: [Point, Point, Point, Point]) {
  * @param originalHeight {number}
  */
 function findLargestBlob(
-  cv,
-  mat,
+  cv: OpenCV,
+  mat: cv.Mat,
   originalWidth: number,
   originalHeight: number,
 ) {
@@ -154,8 +190,8 @@ function findLargestBlob(
  * @returns {cv.Mat}
  */
 export function findLines(
-  cv,
-  outerBox,
+  cv: OpenCV,
+  outerBox: cv.Mat,
   originalWidth: number,
   originalHeight: number,
 ) {
@@ -211,7 +247,12 @@ export function getSquares(maxLength: number) {
   return squares;
 }
 
-export function getOuterbox(cv, img, sudoku, payload: ImageData) {
+export function getOuterbox(
+  cv: OpenCV,
+  img: cv.Mat,
+  sudoku: cv.Mat,
+  payload: ImageData,
+) {
   // This converts the image to a greyscale.
   cv.cvtColor(img, sudoku, cv.COLOR_BGR2GRAY);
 
@@ -252,7 +293,7 @@ export function getOuterbox(cv, img, sudoku, payload: ImageData) {
  * @param digits {cv.Mat[]}
  * @return {cv.Mat}
  */
-export function combineDigits(cv, digits) {
+export function combineDigits(cv: OpenCV, digits: cv.Mat[]) {
   // put together the digits for display
   const result = new cv.Mat(new cv.Size(28 * 9, 28 * 9), cv.CV_8UC1);
   for (let i = 0; i < 9; i++) {
@@ -273,10 +314,7 @@ export function combineDigits(cv, digits) {
   return result;
 }
 
-/**
- * @return {cv.Mat}
- */
-export function preProcessing(cv, payload: ImageData) {
+export function preProcessing(cv: OpenCV, payload: ImageData) {
   const img = cv.matFromImageData(payload);
   const sudoku = new cv.Mat();
   const outerBox = getOuterbox(cv, img, sudoku, payload);
@@ -319,14 +357,10 @@ export function preProcessing(cv, payload: ImageData) {
 
 /**
  * Extracts a digit in white (if one exists) from a Picture square.
- *
- * @param undistorted {cv.Mat}
- * @param square {{p1:{x,y},p2:{x,y}}}
- * @return {cv.Mat}
  */
 export function extractDigit(
-  cv,
-  undistorted,
+  cv: OpenCV,
+  undistorted: cv.Mat,
   square: { p1: Point; p2: Point },
 ) {
   const digit = undistorted.roi(
@@ -355,6 +389,7 @@ export function extractDigit(
   const foundLabels = new Set();
   for (let i = margin; i < w - margin; i++) {
     for (let j = margin; j < h - margin; j++) {
+      // @ts-ignore TODO fix
       foundLabels.add(labels.intAt(i, j));
     }
   }
@@ -405,7 +440,7 @@ export function extractDigit(
   let boundingBox;
   // if maxArea is -1 , we didnt find a number in this box
   if (maxArea === -1) {
-    boundingBox = new cv.Mat.zeros(10, 10, cv.CV_8UC1);
+    boundingBox = cv.Mat.zeros(10, 10, cv.CV_8UC1);
   } else {
     boundingBox = digit.roi(
       new cv.Rect(
@@ -450,7 +485,7 @@ export function extractDigit(
  *
  * @param img {cv.Mat} the img that should become a square
  */
-export function pad_to_square(cv, img) {
+export function pad_to_square(cv: OpenCV, img: cv.Mat) {
   // Scales and centres an image onto a new background square."""
   let h = img.rows;
   let w = img.cols;
@@ -494,7 +529,7 @@ export function pad_to_square(cv, img) {
  * @param output the Mat to draw the lines on
  * @return {[{x:number,y:number}]}
  */
-export function drawLines(cv, lines, output) {
+export function drawLines(cv: OpenCV, lines: cv.Mat, output: cv.Mat) {
   const pointArray: Point[] = [];
   let color = new cv.Scalar(255, 0, 0);
 
