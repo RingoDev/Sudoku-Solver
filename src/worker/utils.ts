@@ -1,9 +1,4 @@
-/*eslint-disable*/
-
-
-export function testImport(){
-  console.log("ran imported function")
-}
+export type Point = { x: number; y: number };
 
 /**
  *
@@ -11,7 +6,11 @@ export function testImport(){
  * @param maxLength length of the longest edge
  * @return {cv.Mat}
  */
-export function getTransformationMatrix(cv, corners, maxLength) {
+export function getTransformationMatrix(
+  cv,
+  corners: [Point, Point, Point, Point],
+  maxLength: number,
+) {
   const src = cv.matFromArray(4, 1, cv.CV_32FC2, [
     corners[0].x,
     corners[0].y,
@@ -37,14 +36,11 @@ export function getTransformationMatrix(cv, corners, maxLength) {
   return cv.getPerspectiveTransform(src, dst);
 }
 
-/**
- * @param pointArray {[{x:number,y:number}]}
- * @param originalWidth {number}
- * @param originalHeight {number}
- *
- * @returns {[{x:number,y:number},{x:number,y:number},{x:number,y:number},{x:number,y:number}]} in format [top_left,top_right,bot_right,bot_left]
- */
-export function getCornerPoints(pointArray, originalWidth, originalHeight) {
+export function getCornerPoints(
+  pointArray: Point[],
+  originalWidth: number,
+  originalHeight: number,
+): [Point, Point, Point, Point] {
   const CONSTANT_CORNERS = [
     { x: 0, y: 0 },
     { x: originalWidth, y: 0 },
@@ -75,13 +71,7 @@ export function getCornerPoints(pointArray, originalWidth, originalHeight) {
   return corners;
 }
 
-/**
- * Calculates the longest edge of the sudoku
- *
- * @param corners {[{x:number,y:number},{x:number,y:number},{x:number,y:number},{x:number,y:number}]}
- * @return {number}
- */
-export function getMaxLength(corners) {
+export function getMaxLength(corners: [Point, Point, Point, Point]) {
   let maxLength = -1;
   for (let i = 0; i < 4; i++) {
     const dist = distanceBetween(corners[i], corners[(i + 1) % 4]);
@@ -97,7 +87,12 @@ export function getMaxLength(corners) {
  * @param originalWidth {number}
  * @param originalHeight {number}
  */
-function findLargestBlob(cv, mat, originalWidth, originalHeight) {
+function findLargestBlob(
+  cv,
+  mat,
+  originalWidth: number,
+  originalHeight: number,
+) {
   const labels = new cv.Mat();
   const stats = new cv.Mat();
   const centoids = new cv.Mat();
@@ -156,11 +151,14 @@ function findLargestBlob(cv, mat, originalWidth, originalHeight) {
 /**
  *
  * @param outerBox the Mat to operate upon (will not be changed)
- * @param originalWidth
- * @param originalHeight
  * @returns {cv.Mat}
  */
-export function findLines(cv, outerBox, originalWidth, originalHeight) {
+export function findLines(
+  cv,
+  outerBox,
+  originalWidth: number,
+  originalHeight: number,
+) {
   //At this point, we have a single blob. Now its time to find lines. This is done with the Hough transform.
   let lines = new cv.Mat();
 
@@ -188,7 +186,7 @@ export function findLines(cv, outerBox, originalWidth, originalHeight) {
     theta,
     threshold,
     minLineLength,
-    maxLineGap
+    maxLineGap,
   );
   return lines;
 }
@@ -196,9 +194,8 @@ export function findLines(cv, outerBox, originalWidth, originalHeight) {
 /**
  *
  * @param maxLength the complete edge Length
- * @return {{p1:{x1:number,x2:number},p2:{x1:number,x2:number}}[]}
  */
-export function getSquares(maxLength) {
+export function getSquares(maxLength: number) {
   const squares = [];
   const side = Math.floor(maxLength / 9);
   for (let i = 0; i < 9; i++) {
@@ -214,8 +211,7 @@ export function getSquares(maxLength) {
   return squares;
 }
 
-export function getOuterbox(cv, img, sudoku, payload) {
-
+export function getOuterbox(cv, img, sudoku, payload: ImageData) {
   // This converts the image to a greyscale.
   cv.cvtColor(img, sudoku, cv.COLOR_BGR2GRAY);
 
@@ -232,7 +228,7 @@ export function getOuterbox(cv, img, sudoku, payload) {
     cv.ADAPTIVE_THRESH_MEAN_C,
     cv.THRESH_BINARY,
     5,
-    2
+    2,
   );
 
   // Since we're interested in the borders, and they are black, we invert the image outerBox.
@@ -267,9 +263,9 @@ export function combineDigits(cv, digits) {
             i * 28,
             j * 28,
             digits[i * 9 + j].cols,
-            digits[i * 9 + j].rows
-          )
-        )
+            digits[i * 9 + j].rows,
+          ),
+        ),
       );
       digits[i * 9 + j].delete();
     }
@@ -278,10 +274,9 @@ export function combineDigits(cv, digits) {
 }
 
 /**
- * @param payload {ImageData}
  * @return {cv.Mat}
  */
-export function preProcessing(cv, payload) {
+export function preProcessing(cv, payload: ImageData) {
   const img = cv.matFromImageData(payload);
   const sudoku = new cv.Mat();
   const outerBox = getOuterbox(cv, img, sudoku, payload);
@@ -307,7 +302,7 @@ export function preProcessing(cv, payload) {
     cv.ADAPTIVE_THRESH_MEAN_C,
     cv.THRESH_BINARY,
     5,
-    2
+    2,
   );
 
   // Since we're interested in the borders, and they are black, we invert the image outerBox.
@@ -329,14 +324,18 @@ export function preProcessing(cv, payload) {
  * @param square {{p1:{x,y},p2:{x,y}}}
  * @return {cv.Mat}
  */
-export function extractDigit(cv, undistorted, square) {
+export function extractDigit(
+  cv,
+  undistorted,
+  square: { p1: Point; p2: Point },
+) {
   const digit = undistorted.roi(
     new cv.Rect(
       square.p1.x,
       square.p1.y,
       square.p2.x - square.p1.x,
-      square.p2.y - square.p1.y
-    )
+      square.p2.y - square.p1.y,
+    ),
   );
 
   // postMessage({msg, payload: imageDataFromMat(digit)})
@@ -413,8 +412,8 @@ export function extractDigit(cv, undistorted, square) {
         boxStats.left_x,
         boxStats.top_y,
         boxStats.width,
-        boxStats.height
-      )
+        boxStats.height,
+      ),
     );
     // pad the image to a square so it doesnt get distorted on resize
     pad_to_square(cv, boundingBox);
@@ -431,7 +430,7 @@ export function extractDigit(cv, undistorted, square) {
     final_padding,
     final_padding,
     cv.BORDER_CONSTANT,
-    new cv.Scalar(0)
+    new cv.Scalar(0),
   );
 
   // scale image to further processing size 28x28
@@ -441,7 +440,7 @@ export function extractDigit(cv, undistorted, square) {
     new cv.Size(28, 28),
     0,
     0,
-    cv.INTER_LINEAR
+    cv.INTER_LINEAR,
   );
 
   return boundingBox;
@@ -479,11 +478,11 @@ export function pad_to_square(cv, img) {
     l_pad,
     r_pad,
     cv.BORDER_CONSTANT,
-    new cv.Scalar(0)
+    new cv.Scalar(0),
   );
   console.assert(
     Math.abs(img.rows - img.cols) <= 1,
-    "Digit is not square enough"
+    "Digit is not square enough",
   );
 }
 
@@ -496,17 +495,17 @@ export function pad_to_square(cv, img) {
  * @return {[{x:number,y:number}]}
  */
 export function drawLines(cv, lines, output) {
-  const pointArray = [];
+  const pointArray: Point[] = [];
   let color = new cv.Scalar(255, 0, 0);
 
   for (let i = 0; i < lines.rows; ++i) {
     let startPoint = new cv.Point(
       lines.data32S[i * 4],
-      lines.data32S[i * 4 + 1]
+      lines.data32S[i * 4 + 1],
     );
     let endPoint = new cv.Point(
       lines.data32S[i * 4 + 2],
-      lines.data32S[i * 4 + 3]
+      lines.data32S[i * 4 + 3],
     );
     pointArray.push({ x: lines.data32S[i * 4], y: lines.data32S[i * 4 + 1] });
     pointArray.push({
@@ -518,13 +517,6 @@ export function drawLines(cv, lines, output) {
   return pointArray;
 }
 
-/**
- *
- * @param {{x:number,y:number}} point1
- * @param {{x:number,y:number}} point2
- *
- * @returns {number} the Distance
- */
-export function distanceBetween(point1, point2) {
+export function distanceBetween(point1: Point, point2: Point) {
   return Math.sqrt((point1.x - point2.x) ** 2 + (point1.y - point2.y) ** 2);
 }

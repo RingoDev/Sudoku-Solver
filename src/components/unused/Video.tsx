@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useEffect, useRef, useState } from "react";
 import cv from "../../worker/queue";
 import CameraSelector from "./CameraSelector";

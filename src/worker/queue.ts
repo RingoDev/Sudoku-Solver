@@ -1,13 +1,13 @@
 import { digit } from "../lib/utils/sudoku";
 
-type Status =
+export type Status =
   | ["error", Event]
   | ["done", MessageEvent]
   | ["loading", undefined];
 
-type MessageType = "load" | "sudokuProcessing" | "imageProcessing";
+export type MessageType = "load" | "sudokuProcessing" | "imageProcessing";
 
-type SudokuEventData = { payload: ImageData; predictions: digit[][] };
+export type SudokuEventData = { payload: ImageData; predictions: digit[][] };
 
 class CV {
   private worker: Worker | undefined;
@@ -16,13 +16,13 @@ class CV {
 
   constructor() {
     this._status = new Map();
-    if(window == undefined) {
-      console.log("cv being called in server side context !")
-      return
-    };
+    if (window == undefined) {
+      console.log("cv being called in server side context !");
+      return;
+    }
 
-    this.worker = new Worker(new URL('./worker', import.meta.url));
-    
+    this.worker = new Worker(new URL("./worker", import.meta.url));
+
     // Capture events and save [status, event] inside the _status object
     this.worker.onmessage = (ev: MessageEvent<{ msg: MessageType }>) => {
       console.debug("Received message from worker", ev);

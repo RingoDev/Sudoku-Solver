@@ -67,6 +67,7 @@ const Upload = () => {
             src={imgUrl}
             height={height}
             width={width}
+            alt={"Sudoku"}
           />
           <div
             className={

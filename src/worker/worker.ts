@@ -1,5 +1,11 @@
-import { combineDigits, extractDigit, getSquares, preProcessing } from "./utils";
-import * as tf from "@tensorflow/tfjs"
+import { MessageType } from "./queue";
+import {
+  combineDigits,
+  extractDigit,
+  getSquares,
+  preProcessing,
+} from "./utils";
+import * as tf from "@tensorflow/tfjs";
 
 let cvReady = false;
 let tfModel: tf.LayersModel | undefined;
@@ -7,23 +13,26 @@ let loading = false;
 
 let cv: any;
 
+function sendMessage(msg: MessageType, payload: { [key: string]: any }) {
+  console.log(payload);
+  return postMessage({ msg, ...payload });
+}
 
 /**
  * With OpenCV we have to work with the images as cv.Mat (matrices),
  * so you'll have to transform the ImageData to it.
  */
-function imageProcessing(msg, payload) {
+function imageProcessing(msg: MessageType, payload) {
   const img = cv.matFromImageData(payload);
   let result = new cv.Mat();
-
 
   // This converts the image to a greyscale.
   cv.cvtColor(img, result, cv.COLOR_BGR2GRAY);
 
-  postMessage({ msg, payload: imageDataFromMat(result) });
+  sendMessage(msg, { payload: imageDataFromMat(result) });
 }
 
-export async function getPredictions(digits, tfModel) {
+export async function getPredictions(digits, tfModel: tf.LayersModel) {
   const numbers = [];
 
   for (let i = 0; i < 9; i++) {
@@ -62,7 +71,7 @@ export async function getPredictions(digits, tfModel) {
  *
  * @returns {void}
  */
-async function sudokuProcessing(msg, payload) {
+async function sudokuProcessing(msg: MessageType, payload: ImageData) {
   let resolveTF;
   if (tfModel === undefined) {
     resolveTF = tf.loadLayersModel("http://localhost:3000/js/model/model.json");
@@ -82,11 +91,13 @@ async function sudokuProcessing(msg, payload) {
     tfModel = await resolveTF;
   }
 
+  if (!tfModel) return;
+
   const numbers = await getPredictions(digits, tfModel);
 
   const result = combineDigits(cv, digits);
 
-  postMessage({ msg, payload: imageDataFromMat(result), predictions: numbers });
+  sendMessage(msg, { payload: imageDataFromMat(result), predictions: numbers });
 
   // clear up our garbage
   undistorted.delete();
@@ -119,18 +130,17 @@ function imageDataFromMat(mat) {
       break;
     default:
       throw new Error(
-        "Bad number of channels (Source image must have 1, 3 or 4 channels)"
+        "Bad number of channels (Source image must have 1, 3 or 4 channels)",
       );
   }
   const clampedArray = new ImageData(
     new Uint8ClampedArray(img.data),
     img.cols,
-    img.rows
+    img.rows,
   );
   img.delete();
   return clampedArray;
 }
-
 
 /**
  * This exists to capture all the events that are thrown out of the worker
@@ -138,8 +148,7 @@ function imageDataFromMat(mat) {
  * with the project.
  */
 self.addEventListener("message", async (e) => {
-
-  console.log("Received message in worker: ", e)
+  console.log("Received message in worker: ", e);
   if (e.data.msg !== "load" && !cvReady) {
     postMessage({ msg: e.data.msg, error: true });
     return;
@@ -158,7 +167,7 @@ self.addEventListener("message", async (e) => {
       // eslint-disable-next-line no-restricted-globals
       cv = await (await import("../opencv/opencv_js")).default();
       cvReady = true;
-      console.log("loaded opencv")
+      console.log("loaded opencv");
       postMessage({ msg: "load" });
 
       break;
@@ -172,6 +181,4 @@ self.addEventListener("message", async (e) => {
     default:
       break;
   }
-
-
 });
