@@ -77,7 +77,7 @@ export async function getPredictions(digits: Mat[], tfModel: tf.LayersModel) {
 async function sudokuProcessing(msg: MessageType, payload: ImageData) {
   let resolveTF;
   if (tfModel === undefined) {
-    resolveTF = tf.loadLayersModel("http://localhost:3000/js/model/model.json");
+    resolveTF = tf.loadLayersModel("/js/model/model.json");
   }
 
   const undistorted = preProcessing(cv, payload);
