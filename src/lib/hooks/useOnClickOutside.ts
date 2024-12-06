@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import assertIsNode from "../utils/nodeAssert";
 
 function useOnClickOutside(
-  ref: React.RefObject<HTMLDivElement>,
+  ref: React.RefObject<HTMLDivElement | null>,
   callback: () => any,
 ) {
   useEffect(() => {
